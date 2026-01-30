@@ -1,12 +1,11 @@
-import { useState, useRef } from 'react';
-import AppBar from '@mui/material/AppBar';
+import Logo from '../Logo/Logo';
 import Box from '@mui/material/Box';
+import Avatar from '@mui/material/Avatar';
+import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
+import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Logo from '../Logo/Logo';
 
 const Navbar: React.FC = () => {
   return (
