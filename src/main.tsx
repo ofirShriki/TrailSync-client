@@ -4,7 +4,7 @@ import '@fontsource/dm-sans/700.css';
 
 import './index.css';
 import { StrictMode } from 'react';
-import App from './components/App.tsx';
+import App from './components/App/App.tsx';
 import { theme } from './theme/theme.ts';
 import { createRoot } from 'react-dom/client';
 import { CssBaseline, ThemeProvider } from '@mui/material';

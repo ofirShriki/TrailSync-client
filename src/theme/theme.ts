@@ -13,6 +13,11 @@ declare module '@mui/material/styles' {
 export const theme = createTheme({
   typography: {
     fontFamily: `'DM Sans', sans-serif`,
+    button: {
+      textTransform: 'none',
+      letterSpacing: 'normal',
+      fontWeight: 700,
+    },
     h1: {
       fontSize: '3rem',
       fontWeight: 700,
@@ -38,7 +43,7 @@ export const theme = createTheme({
     primary: {
       main: primaryColors.green,
       light: primaryColors.blue,
-      dark: primaryColors.orange,
+      dark: primaryColors.lightGreen,
     },
     secondary: {
       main: secondaryColors.peach,
