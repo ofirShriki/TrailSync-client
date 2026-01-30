@@ -13,6 +13,26 @@ declare module '@mui/material/styles' {
 export const theme = createTheme({
   typography: {
     fontFamily: `'DM Sans', sans-serif`,
+    h1: {
+      fontSize: '3rem',
+      fontWeight: 700,
+      lineHeight: 1.15,
+    },
+    h2: {
+      fontSize: '2.25rem',
+      fontWeight: 600,
+      lineHeight: 1.2,
+    },
+    h3: {
+      fontSize: '1.75rem',
+      fontWeight: 600,
+      lineHeight: 1.25,
+    },
+    h4: {
+      fontSize: '1.375rem',
+      fontWeight: 600,
+      lineHeight: 1.3,
+    },
   },
   palette: {
     primary: {
