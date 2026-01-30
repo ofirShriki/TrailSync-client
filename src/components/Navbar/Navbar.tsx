@@ -1,3 +1,4 @@
+import type React from 'react';
 import Logo from '../Logo/Logo';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';

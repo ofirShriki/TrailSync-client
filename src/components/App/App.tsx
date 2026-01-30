@@ -1,3 +1,4 @@
+import type React from 'react';
 import Navbar from '../Navbar/Navbar';
 
 const App: React.FC = () => {
