@@ -1,11 +1,12 @@
 import React from 'react';
-import { Box, Typography, Modal, IconButton } from '@mui/material';
+import { Box, Typography, IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import type { Post } from '../../types/post';
 import ImageCarousel from '../ImageCarousel/ImageCarousel';
 import LogisticsSection from './Logistics/LogisticsSection';
 
 import style from './PostModal.module.css';
+import GenericModal from '../GenericModal/GenericModal';
 
 interface PostModalProps {
   isModalOpen: boolean;
@@ -17,47 +18,38 @@ const PostModal: React.FC<PostModalProps> = ({ isModalOpen, setIsModalOpen, post
   const handleCloseModal = () => setIsModalOpen(false);
 
   return (
-    <Modal open={isModalOpen} onClose={handleCloseModal}>
-      <Box
-        className={style.modal}
-        sx={{
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 3,
-        }}
-      >
-        <Box className={style.header}>
-          <IconButton onClick={handleCloseModal} size="small">
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography variant="h5">{post.title}</Typography>
+    <GenericModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
+      <Box className={style.header}>
+        <IconButton onClick={handleCloseModal} size="small">
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography variant="h5">{post.title}</Typography>
+      </Box>
+
+      <Box className={style.content}>
+        <Box className={style.column}>
+          <iframe className={style.iframe} src={post.mapLink} allowFullScreen loading="lazy" />
+          <ImageCarousel photos={post.photos} alt={post.title} />
         </Box>
 
-        <Box className={style.content}>
-          <Box className={style.column}>
-            <iframe className={style.iframe} src={post.mapLink} allowFullScreen loading="lazy" />
-            <ImageCarousel photos={post.photos} alt={post.title} />
+        <Box className={style.column}>
+          <Box className={style.description}>
+            <Typography variant="h6" className={style.descriptionTitle}>
+              Description
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {post.description}
+            </Typography>
           </Box>
 
-          <Box className={style.column}>
-            <Box className={style.description}>
-              <Typography variant="h6" className={style.descriptionTitle}>
-                Description
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {post.description}
-              </Typography>
-            </Box>
-
-            <LogisticsSection
-              region={`${post.location.city}, ${post.location.country}`}
-              numberOfDays={post.numberOfDays}
-              price={post.price}
-            />
-          </Box>
+          <LogisticsSection
+            region={`${post.location.city}, ${post.location.country}`}
+            numberOfDays={post.numberOfDays}
+            price={post.price}
+          />
         </Box>
       </Box>
-    </Modal>
+    </GenericModal>
   );
 };
 

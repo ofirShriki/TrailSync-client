@@ -3,6 +3,7 @@ import water from '../assets/photos/waterTravel.png';
 import london from '../assets/photos/london.png';
 import type { Comment } from '../types/comment';
 import type { Post } from '../types/post';
+import type { User } from '../types/user';
 
 const postOneComments: Comment[] = [
   {
@@ -134,5 +135,36 @@ export const posts: Post[] = [
       'Explore the historic streets of London with guided walks, local food stops, and iconic views across the Thames.',
     photos: [london],
     comments: postTwoComments,
+  },
+];
+
+export const users: User[] = [
+  {
+    id: 'u1',
+    email: 'alex@example.com',
+    password: 'hashed_password_1',
+    username: 'alex_travels',
+    profilePicture: '/avatars/alex.png',
+    createdAt: new Date('2024-01-10T10:30:00Z'),
+    updatedAt: new Date('2024-06-12T14:45:00Z'),
+    posts: [posts[0], posts[1], posts[2]],
+  },
+  {
+    id: 'u2',
+    email: 'maria@example.com',
+    password: 'hashed_password_2',
+    username: 'maria.codes',
+    profilePicture: '/avatars/maria.png',
+    createdAt: new Date('2024-02-05T09:15:00Z'),
+    updatedAt: new Date('2024-06-01T08:20:00Z'),
+    posts: [posts[0]],
+  },
+  {
+    id: 'u3',
+    email: 'john@example.com',
+    password: 'hashed_password_3',
+    username: 'john_doe',
+    createdAt: new Date('2023-11-20T18:00:00Z'),
+    updatedAt: new Date('2024-05-30T12:10:00Z'),
   },
 ];

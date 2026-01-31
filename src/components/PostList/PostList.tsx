@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Box } from '@mui/material';
 import PostCard from '../PostCard/PostCard';
-import { posts } from '../../constants/staticInfo';
 import type { Post } from '../../types/post';
 import PostModal from '../PostModal/PostModal';
 
-const PostList: React.FC = () => {
+interface PostListProps {
+  posts: Post[];
+}
+
+const PostList: React.FC<PostListProps> = ({ posts }) => {
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
@@ -22,7 +25,7 @@ const PostList: React.FC = () => {
         p: 2,
       }}
     >
-      {[...posts, ...posts, ...posts].map((post: Post) => (
+      {posts.map((post: Post) => (
         <PostCard key={post.id} post={post} onCardClick={() => handleCardClick(post)} />
       ))}
 
