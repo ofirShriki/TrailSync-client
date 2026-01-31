@@ -19,35 +19,98 @@ interface PostProperties {
   onCardClick?: () => void;
 }
 
-const PostCard: React.FC<PostProperties> = ({ post, onCardClick }: PostProperties) => {
+const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
   const firstPhoto = post.photos[0];
 
   return (
-    <Card sx={{ width: '100%', borderRadius: 3, cursor: 'pointer' }} onClick={onCardClick}>
-      <Box sx={{ position: 'relative' }}>
-        <CardMedia component="img" height="180" image={firstPhoto} alt={post.title} />
-      </Box>
-      <CardContent>
-        <Typography variant="h6" component="div">
-          {post.title}
-        </Typography>
-        <PostMetadata
-          location={post.location}
-          numberOfDays={post.numberOfDays}
-          price={post.price}
+    <Card
+      onClick={onCardClick}
+      sx={{
+        width: '100%',
+        cursor: 'pointer',
+        borderRadius: 4,
+        overflow: 'hidden',
+        transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+        '&:hover': {
+          transform: 'translateY(-2px)',
+          boxShadow: 4,
+        },
+      }}
+    >
+      <Box sx={{ display: 'flex', minHeight: 160 }}>
+        <Box sx={{ flex: 1, p: 1 }}>
+          <CardContent sx={{ p: 0 }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 600,
+                mb: 0.5,
+                lineHeight: 1.3,
+              }}
+            >
+              {post.title}
+            </Typography>
+
+            <PostMetadata
+              location={post.location}
+              numberOfDays={post.numberOfDays}
+              price={post.price}
+            />
+
+            <Typography
+              variant="body1"
+              sx={{
+                mt: 1,
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {post.description}
+            </Typography>
+          </CardContent>
+        </Box>
+
+        <CardMedia
+          component="img"
+          image={firstPhoto}
+          alt={post.title}
+          sx={{
+            width: 160,
+            p: 1,
+            borderRadius: 3,
+            objectFit: 'cover',
+          }}
         />
-      </CardContent>
-      <Divider orientation="horizontal" />
-      <CardActions sx={{ justifyContent: 'space-between', px: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <ChatBubbleOutlineIcon sx={{ width: 20, height: 20 }} color="action" />
-          <Typography variant="body2">{post.comments?.length ?? 0}</Typography>
+      </Box>
+
+      <Divider />
+
+      <CardActions
+        sx={{
+          px: 2,
+          py: 1,
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <ChatBubbleOutlineIcon fontSize="small" color="action" />
+          <Typography variant="body2" color="text.secondary">
+            {post.comments?.length ?? 0}
+          </Typography>
         </Box>
-        <Box>
-          <IconButton component="a" href={post.mapLink}>
-            <Box component={GoogleMaps} />
-          </IconButton>
-        </Box>
+
+        <IconButton
+          component="a"
+          href={post.mapLink}
+          onClick={(e) => e.stopPropagation()}
+          size="small"
+        >
+          <Box component={GoogleMaps} />
+        </IconButton>
       </CardActions>
     </Card>
   );

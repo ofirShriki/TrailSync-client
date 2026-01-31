@@ -5,14 +5,20 @@ import Home from '../Home/Home';
 
 const App: React.FC = () => {
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        height: '100vh',
+        overflow: 'hidden',
+      }}
+    >
       <Navbar />
 
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          overflow: 'auto',
+          overflowY: 'auto',
         }}
       >
         <Home />

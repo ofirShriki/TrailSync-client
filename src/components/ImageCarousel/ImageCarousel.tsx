@@ -23,7 +23,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ photos, alt = 'carousel i
         component="img"
         src={photos[currentImageIndex]}
         alt={alt}
-        sx={{ width: '100%', borderRadius: 2, maxHeight: 300, objectFit: 'cover' }}
+        sx={{ width: '100%', borderRadius: 2, height: 200, objectFit: 'cover' }}
       />
       {photos.length > 1 && (
         <>

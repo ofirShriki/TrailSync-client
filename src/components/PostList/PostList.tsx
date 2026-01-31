@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Box } from '@mui/material';
 import PostCard from '../PostCard/PostCard';
 import { posts } from '../../constants/staticInfo';
@@ -9,10 +9,6 @@ const PostList: React.FC = () => {
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
-  useEffect(() => {
-    console.log(isPostModalOpen);
-  }, [isPostModalOpen]);
-
   const handleCardClick = (post: Post) => {
     setSelectedPost(post);
     setIsPostModalOpen(true);
@@ -22,12 +18,11 @@ const PostList: React.FC = () => {
     <Box
       sx={{
         display: 'grid',
-        gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
         gap: 2,
         p: 2,
       }}
     >
-      {[...posts, ...posts].map((post: Post) => (
+      {[...posts, ...posts, ...posts].map((post: Post) => (
         <PostCard key={post.id} post={post} onCardClick={() => handleCardClick(post)} />
       ))}
 
