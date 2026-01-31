@@ -38,6 +38,7 @@ const styles = {
 
 	media: {
 		width: 160,
+		height: 160,
 		padding: 1,
 		borderRadius: 3,
 		objectFit: "cover",

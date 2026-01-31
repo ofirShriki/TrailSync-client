@@ -14,7 +14,11 @@ const Home: React.FC = () => {
 	const [isHovered, setIsHovered] = useState(false);
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-	const { data: posts = [], isLoading } = useQuery<Post[]>({
+	const {
+		data: posts = [],
+		isLoading,
+		refetch,
+	} = useQuery<Post[]>({
 		queryKey: [QUERY_KEYS.POSTS],
 		queryFn: async () => await postService.getAllPosts(),
 		refetchOnReconnect: false,
@@ -45,6 +49,7 @@ const Home: React.FC = () => {
 				<CreatePostModal
 					isModalOpen={isCreateModalOpen}
 					setIsModalOpen={setIsCreateModalOpen}
+					refetchPosts={refetch}
 				/>
 			)}
 		</Box>

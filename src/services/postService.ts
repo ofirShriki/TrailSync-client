@@ -32,6 +32,15 @@ export const postService = {
 		});
 		return response.data;
 	},
+
+	async createPost(formData: FormData): Promise<Post> {
+		const response = await axiosInstance.post<Post>("/post", formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		});
+		return response.data;
+	},
 };
 
 export default postService;
