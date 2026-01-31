@@ -35,6 +35,7 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
           transform: 'translateY(-2px)',
           boxShadow: 4,
         },
+        padding: 1,
       }}
     >
       <Box sx={{ display: 'flex', minHeight: 160 }}>

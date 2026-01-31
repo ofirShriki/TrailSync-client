@@ -1,29 +1,23 @@
-import type React from 'react';
-import { Box } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Box from '@mui/material/Box';
 import Navbar from '../Navbar/Navbar';
 import Home from '../Home/Home';
+import Profile from '../Profile/Profile';
 
-const App: React.FC = () => {
+const App = () => {
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        height: '100vh',
-        overflow: 'hidden',
-      }}
-    >
-      <Navbar />
-
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          overflowY: 'auto',
-        }}
-      >
-        <Home />
+    <Router>
+      <Box sx={{ display: 'flex', height: '100vh' }}>
+        <Navbar />
+        <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Box>
       </Box>
-    </Box>
+    </Router>
   );
 };
 
