@@ -1,13 +1,23 @@
 import type React from 'react';
+import { Box } from '@mui/material';
 import Navbar from '../Navbar/Navbar';
 import Home from '../Home/Home';
 
 const App: React.FC = () => {
   return (
-    <div>
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <Navbar />
-      <Home />
-    </div>
+
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          overflow: 'auto',
+        }}
+      >
+        <Home />
+      </Box>
+    </Box>
   );
 };
 
