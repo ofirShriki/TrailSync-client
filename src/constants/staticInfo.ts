@@ -147,7 +147,6 @@ export const users: User[] = [
     profilePicture: '/avatars/alex.png',
     createdAt: new Date('2024-01-10T10:30:00Z'),
     updatedAt: new Date('2024-06-12T14:45:00Z'),
-    posts: [posts[0], posts[1], posts[2]],
   },
   {
     id: 'u2',
@@ -157,7 +156,6 @@ export const users: User[] = [
     profilePicture: '/avatars/maria.png',
     createdAt: new Date('2024-02-05T09:15:00Z'),
     updatedAt: new Date('2024-06-01T08:20:00Z'),
-    posts: [posts[0]],
   },
   {
     id: 'u3',

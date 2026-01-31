@@ -37,7 +37,7 @@ const styles = {
 		},
 	}),
 
-	avatar: { width: 24, height: 24 },
+	avatar: { width: 30, height: 30 },
 };
 
 export default styles;
