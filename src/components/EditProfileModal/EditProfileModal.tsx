@@ -182,6 +182,28 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 					)}
 				/>
 
+				<Controller
+					name="password"
+					control={control}
+					rules={{
+						minLength: {
+							value: 6,
+							message: "Password must be at least 6 characters",
+						},
+					}}
+					render={({ field }) => (
+						<TextField
+							{...field}
+							label="Change Password (optional)"
+							type="password"
+							fullWidth
+							placeholder="Leave blank to keep current password"
+							error={!!errors.password}
+							helperText={errors.password?.message}
+						/>
+					)}
+				/>
+
 				<Button
 					type="submit"
 					variant="contained"

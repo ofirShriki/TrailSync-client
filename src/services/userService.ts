@@ -4,6 +4,7 @@ import axiosInstance from "./axiosInstance";
 export interface UpdateUserData {
 	username?: string;
 	email?: string;
+	password?: string;
 	profilePicture?: File | string;
 }
 
@@ -19,6 +20,7 @@ export const userService = {
 
 		if (data.username) formData.append("username", data.username);
 		if (data.email) formData.append("email", data.email);
+		if (data.password) formData.append("password", data.password);
 		if (data.profilePicture instanceof File) {
 			formData.append("profilePicture", data.profilePicture);
 		}
