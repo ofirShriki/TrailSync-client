@@ -2,48 +2,69 @@ import type React from "react";
 import Box from "@mui/material/Box";
 import { Avatar, Divider, IconButton, Typography } from "@mui/material";
 import PostList from "../../components/PostList";
-import { users } from "../../constants/staticInfo";
 import { Edit } from "@mui/icons-material";
 import { useState } from "react";
 import EditProfileModal from "../../components/EditProfileModal";
 import styles from "./Profile.styles";
+import { useAuth } from "../../contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { QUERY_KEYS } from "../../constants/queryKeys";
+import userService from "../../services/userService";
+import postService from "../../services/postService";
 
 const Profile: React.FC = () => {
-	const user = users[0];
-	const { username, profilePicture, posts } = user;
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+	const { userId } = useAuth();
+
+	const { data: user } = useQuery({
+		queryKey: [QUERY_KEYS.USER_BY_ID],
+		enabled: !!userId,
+		queryFn: () => userService.getUserById(userId!),
+	});
+
+	const { data: posts } = useQuery({
+		queryKey: [QUERY_KEYS.POSTS_BY_USER, userId],
+		enabled: !!userId,
+		queryFn: () => postService.getAllPosts({ sender: userId! }),
+	});
 
 	return (
-		<Box>
-			<Box sx={styles.header}>
-				<Avatar src={profilePicture} alt={username} sx={styles.avatar} />
-				<Box>
-					<Box sx={styles.usernameContainer}>
-						<Typography variant="h5" fontWeight={500}>
-							{username}
+		user && (
+			<Box>
+				<Box sx={styles.header}>
+					<Avatar
+						src={`${import.meta.env.VITE_SERVER_URL}/${user?.profilePicture}`}
+						alt={user?.username}
+						sx={styles.avatar}
+					/>
+					<Box>
+						<Box sx={styles.usernameContainer}>
+							<Typography variant="h5" fontWeight={500}>
+								{user?.username}
+							</Typography>
+
+							<IconButton
+								color="primary"
+								onClick={() => setIsEditModalOpen(true)}
+							>
+								<Edit />
+							</IconButton>
+						</Box>
+
+						<Typography variant="body1" sx={styles.postsTitle}>
+							<strong>{posts?.length}</strong> posts
 						</Typography>
-
-						<IconButton
-							color="primary"
-							onClick={() => setIsEditModalOpen(true)}
-						>
-							<Edit />
-						</IconButton>
 					</Box>
-
-					<Typography variant="body1" sx={styles.postsTitle}>
-						<strong>{posts?.length}</strong> posts
-					</Typography>
 				</Box>
+				<Divider sx={styles.divider} />
+				{posts && <PostList posts={posts} />}
+				<EditProfileModal
+					isModalOpen={isEditModalOpen}
+					setIsModalOpen={setIsEditModalOpen}
+					user={user}
+				/>
 			</Box>
-			<Divider sx={styles.divider} />
-			{posts && <PostList posts={posts} />}
-			<EditProfileModal
-				isModalOpen={isEditModalOpen}
-				setIsModalOpen={setIsEditModalOpen}
-				user={user}
-			/>
-		</Box>
+		)
 	);
 };
 
