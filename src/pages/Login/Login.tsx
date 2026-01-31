@@ -13,9 +13,18 @@ import { Logo } from "../../components/Icons";
 import { PATHS } from "../../constants/routes";
 import { authService, type LoginData } from "../../services/authService";
 import styles from "./Login.styles";
+import { useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Login = () => {
 	const navigate = useNavigate();
+	const { login: authLogin, isAuthenticated } = useAuth();
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			navigate(PATHS.HOME);
+		}
+	}, [isAuthenticated, navigate]);
 
 	const {
 		control,
@@ -36,7 +45,8 @@ const Login = () => {
 		isPending,
 	} = useMutation({
 		mutationFn: (data: LoginData) => authService.login(data),
-		onSuccess: _data => {
+		onSuccess: ({ tokens: { token, refreshToken }, userId }) => {
+			authLogin(token, refreshToken, userId);
 			navigate(PATHS.HOME);
 		},
 	});

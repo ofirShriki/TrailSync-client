@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+	BrowserRouter as Router,
+	Routes,
+	Route,
+	Navigate,
+} from "react-router-dom";
 import Box from "@mui/material/Box";
 import Navbar from "../Navbar";
 import styles from "./App.styles";
@@ -8,42 +13,60 @@ import {
 	UNAUTHENTICATED_ROUTES,
 	type RouteType,
 } from "../../constants/routes";
-import { useEffect, useState } from "react";
-import { ACCESS_TOKEN } from "../../constants/localStorage";
+import { AuthProvider, useAuth } from "../../contexts/AuthContext";
+import { CircularProgress } from "@mui/material";
 
-const App = () => {
-	const queryClient = new QueryClient();
-	const [loggedIn, setLoggedIn] = useState(false);
+const queryClient = new QueryClient();
 
-	window.addEventListener("storage", () => {
-		setLoggedIn(Boolean(localStorage.getItem(ACCESS_TOKEN)));
-	});
+const AppRoutes = () => {
+	const { isAuthenticated, isLoading } = useAuth();
 
-	useEffect(() => {
-		setLoggedIn(Boolean(localStorage.getItem(ACCESS_TOKEN)));
-	}, []);
+	if (isLoading) {
+		return (
+			<Box
+				sx={{
+					display: "flex",
+					justifyContent: "center",
+					alignItems: "center",
+					height: "100vh",
+				}}
+			>
+				<CircularProgress />
+			</Box>
+		);
+	}
 
 	return (
+		<Box sx={styles.root}>
+			{isAuthenticated && <Navbar />}
+			<Box sx={styles.pageContainer}>
+				<Routes>
+					{UNAUTHENTICATED_ROUTES.map(
+						({ path, element: Component }: RouteType) => (
+							<Route key={path} path={path} element={<Component />} />
+						),
+					)}
+					{isAuthenticated ? (
+						ROUTES.map(({ path, element: Component }: RouteType) => (
+							<Route key={path} path={path} element={<Component />} />
+						))
+					) : (
+						<Route path="*" element={<Navigate to="/" replace />} />
+					)}
+				</Routes>
+			</Box>
+		</Box>
+	);
+};
+
+const App = () => {
+	return (
 		<QueryClientProvider client={queryClient}>
-			<Router>
-				<Box sx={styles.root}>
-					<Routes>
-						{UNAUTHENTICATED_ROUTES.map(
-							({ path, element: Component }: RouteType) => (
-								<Route key={path} path={path} element={<Component />} />
-							),
-						)}
-						{loggedIn && (
-							<Box sx={styles.pageContainer}>
-								<Navbar />
-								{ROUTES.map(({ path, element: Component }: RouteType) => (
-									<Route key={path} path={path} element={<Component />} />
-								))}
-							</Box>
-						)}
-					</Routes>
-				</Box>
-			</Router>
+			<AuthProvider>
+				<Router>
+					<AppRoutes />
+				</Router>
+			</AuthProvider>
 		</QueryClientProvider>
 	);
 };
