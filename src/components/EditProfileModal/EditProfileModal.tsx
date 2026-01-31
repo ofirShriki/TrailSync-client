@@ -14,7 +14,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 }) => {
 	return (
 		<GenericModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
-			dsad
+			edit profile modal
 		</GenericModal>
 	);
 };
