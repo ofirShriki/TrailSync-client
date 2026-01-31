@@ -1,10 +1,11 @@
 import type React from "react";
 import Box from "@mui/material/Box";
-import { Avatar, Divider, IconButton, Typography } from "@mui/material";
+import { Avatar, Button, Divider, IconButton, Typography } from "@mui/material";
 import PostList from "../../components/PostList";
-import { Edit } from "@mui/icons-material";
+import { Add, Edit } from "@mui/icons-material";
 import { useState } from "react";
 import EditProfileModal from "../../components/EditProfileModal";
+import CreatePostModal from "../../components/CreatePostModal";
 import styles from "./Profile.styles";
 import { useAuth } from "../../contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -14,6 +15,7 @@ import postService from "../../services/postService";
 
 const Profile: React.FC = () => {
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const { userId } = useAuth();
 
 	const { data: user } = useQuery({
@@ -32,29 +34,42 @@ const Profile: React.FC = () => {
 		user && (
 			<Box>
 				<Box sx={styles.header}>
-					<Avatar
-						src={`${import.meta.env.VITE_SERVER_URL}/${user?.profilePicture}`}
-						alt={user?.username}
-						sx={styles.avatar}
-					/>
-					<Box>
-						<Box sx={styles.usernameContainer}>
-							<Typography variant="h5" fontWeight={500}>
-								{user?.username}
+					<Box sx={styles.headerInfo}>
+						<Avatar
+							src={`${import.meta.env.VITE_SERVER_URL}/${user?.profilePicture}`}
+							alt={user?.username}
+							sx={styles.avatar}
+						/>
+						<Box>
+							<Box sx={styles.usernameContainer}>
+								<Typography variant="h5" fontWeight={500}>
+									{user?.username}
+								</Typography>
+
+								<Box sx={{ display: "flex", gap: 1 }}>
+									<IconButton
+										color="primary"
+										onClick={() => setIsEditModalOpen(true)}
+									>
+										<Edit />
+									</IconButton>
+								</Box>
+							</Box>
+
+							<Typography variant="body1" sx={styles.postsTitle}>
+								<strong>{posts?.length}</strong> posts
 							</Typography>
-
-							<IconButton
-								color="primary"
-								onClick={() => setIsEditModalOpen(true)}
-							>
-								<Edit />
-							</IconButton>
 						</Box>
-
-						<Typography variant="body1" sx={styles.postsTitle}>
-							<strong>{posts?.length}</strong> posts
-						</Typography>
 					</Box>
+					<Button
+						variant="contained"
+						sx={styles.addButton}
+						color="primary"
+						startIcon={<Add />}
+						onClick={() => setIsCreateModalOpen(true)}
+					>
+						Share new trail
+					</Button>
 				</Box>
 				<Divider sx={styles.divider} />
 				{posts && <PostList posts={posts} />}
@@ -62,6 +77,10 @@ const Profile: React.FC = () => {
 					isModalOpen={isEditModalOpen}
 					setIsModalOpen={setIsEditModalOpen}
 					user={user}
+				/>
+				<CreatePostModal
+					isModalOpen={isCreateModalOpen}
+					setIsModalOpen={setIsCreateModalOpen}
 				/>
 			</Box>
 		)

@@ -8,6 +8,8 @@ import {
 	InputAdornment,
 	Card,
 	CardMedia,
+	CircularProgress,
+	Alert,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
@@ -16,6 +18,10 @@ import style from "./CreatePostModal.styles.ts";
 import GenericModal from "../GenericModal/index.ts";
 import { useForm, Controller } from "react-hook-form";
 import { GoogleMaps } from "../Icons/index.ts";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { postService } from "../../services/postService";
+import { QUERY_KEYS } from "../../constants/queryKeys";
+import { useAuth } from "../../contexts/AuthContext.jsx";
 
 export interface CreatePostFormData {
 	title: string;
@@ -39,6 +45,8 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
 	isModalOpen,
 	setIsModalOpen,
 }) => {
+	const { userId } = useAuth();
+	const queryClient = useQueryClient();
 	const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
 
 	const {
@@ -51,6 +59,24 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
 		mode: "onChange",
 		defaultValues: {
 			photos: [],
+		},
+	});
+
+	const {
+		mutate: createPost,
+		isError,
+		error,
+		isPending,
+	} = useMutation({
+		mutationFn: (formData: FormData) => postService.createPost(formData),
+		onSuccess: () => {
+			handleCloseModal();
+			queryClient.invalidateQueries({
+				queryKey: [QUERY_KEYS.POSTS],
+			});
+			queryClient.invalidateQueries({
+				queryKey: [QUERY_KEYS.POSTS_BY_USER, userId],
+			});
 		},
 	});
 
@@ -100,9 +126,24 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
 	};
 
 	const onSubmit = (data: CreatePostFormData) => {
-		console.log("Form submitted:", data);
-		// TODO: Handle post creation logic here
-		handleCloseModal();
+		const formData = new FormData();
+		formData.append("title", data.title);
+		formData.append("mapLink", data.mapLink);
+		formData.append("price", data.price.toString());
+		formData.append("numberOfDays", data.numberOfDays.toString());
+		formData.append("location[country]", data.location.country);
+
+		if (data.location.city) {
+			formData.append("location[city]", data.location.city);
+		}
+
+		formData.append("description", data.description);
+
+		data.photos.forEach(file => {
+			formData.append("photos", file);
+		});
+
+		createPost(formData);
 	};
 
 	return (
@@ -316,14 +357,20 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
 					)}
 				/>
 
+				{isError && (
+					<Alert severity="error">
+						{(error as any)?.response?.data?.message ||
+							"Failed to create post. Please try again."}
+					</Alert>
+				)}
 				<Button
 					type="submit"
 					variant="contained"
 					color="primary"
 					fullWidth
-					disabled={Object.keys(errors).length > 0}
+					disabled={Object.keys(errors).length > 0 || isPending}
 				>
-					Publish
+					{isPending ? <CircularProgress size={24} /> : "Publish"}
 				</Button>
 			</Box>
 		</GenericModal>

@@ -1,10 +1,17 @@
 const styles = {
 	header: {
 		display: "flex",
-		gap: 4,
-		alignItems: "flex-start",
+		justifyContent: "space-between",
 		padding: 2,
 	},
+
+	headerInfo: {
+		display: "flex",
+		gap: 4,
+		padding: 2,
+	},
+
+	addButton: { height: "fit-content" },
 
 	avatar: { width: 100, height: 100 },
 
@@ -17,11 +24,11 @@ const styles = {
 
 	postsTitle: {
 		marginBottom: 1,
-    },
-    
-    divider: {
-        marginTop: 2,
-    }
+	},
+
+	divider: {
+		marginTop: 2,
+	},
 };
 
 export default styles;

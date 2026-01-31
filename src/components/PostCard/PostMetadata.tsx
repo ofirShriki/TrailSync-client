@@ -20,7 +20,7 @@ const PostMetadata: React.FC<PostMetadataProps> = ({
 	const itemsToDisplay = [
 		{
 			iconComponent: LocationOnIcon,
-			text: `${location.city}, ${location.country}`,
+			text: `${location.city ? `${location.city}, ` : ""}${location.country}`,
 		},
 		{
 			iconComponent: CalendarTodayIcon,

@@ -51,7 +51,7 @@ const PostModal: React.FC<PostModalProps> = ({
 					</Box>
 
 					<LogisticsSection
-						region={`${post.location.city}, ${post.location.country}`}
+						region={`${post.location.city ? `${post.location.city}, ` : ""}${post.location.country}`}
 						numberOfDays={post.numberOfDays}
 						price={post.price}
 					/>
