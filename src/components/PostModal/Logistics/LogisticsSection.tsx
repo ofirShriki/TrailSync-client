@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography, Grid } from "@mui/material";
-import LogisticItem from "../../LogisticItem/LogisticItem";
+import LogisticItem from "../../LogisticItem";
 import styles from "../PostModal.styles";
 
 interface LogisticsSectionProps {

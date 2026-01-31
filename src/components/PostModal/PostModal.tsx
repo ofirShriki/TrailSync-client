@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import type { Post } from "../../types/post";
-import ImageCarousel from "../ImageCarousel/ImageCarousel";
+import ImageCarousel from "../ImageCarousel";
 import LogisticsSection from "./Logistics/LogisticsSection";
 import style from "./PostModal.styles.ts";
 import GenericModal from "../GenericModal";

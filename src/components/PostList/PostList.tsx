@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
-import PostCard from "../PostCard/PostCard";
+import PostCard from "../PostCard";
 import type { Post } from "../../types/post";
-import PostModal from "../PostModal/PostModal";
+import PostModal from "../PostModal";
 import styles from "./PostList.styles";
 
 interface PostListProps {

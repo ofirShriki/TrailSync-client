@@ -1,11 +1,11 @@
 import type React from "react";
 import Box from "@mui/material/Box";
 import { Avatar, Divider, IconButton, Typography } from "@mui/material";
-import PostList from "../../components/PostList/PostList";
+import PostList from "../../components/PostList";
 import { users } from "../../constants/staticInfo";
 import { Edit } from "@mui/icons-material";
 import { useState } from "react";
-import EditProfileModal from "../../components/EditProfileModal/EditProfileModal";
+import EditProfileModal from "../../components/EditProfileModal";
 import styles from "./Profile.styles";
 
 const Profile: React.FC = () => {

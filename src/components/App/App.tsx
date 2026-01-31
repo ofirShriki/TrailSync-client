@@ -5,9 +5,9 @@ import {
 	Navigate,
 } from "react-router-dom";
 import Box from "@mui/material/Box";
-import Navbar from "../Navbar/Navbar";
-import Home from "../../pages/Home/Home";
-import Profile from "../../pages/Profile/Profile";
+import Navbar from "../Navbar";
+import Home from "../../pages/Home";
+import Profile from "../../pages/Profile";
 import styles from "./App.styles";
 
 const App = () => {

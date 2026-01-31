@@ -1,5 +1,5 @@
 import type React from "react";
-import PostList from "../../components/PostList/PostList";
+import PostList from "../../components/PostList";
 import { posts } from "../../constants/staticInfo";
 
 const Home: React.FC = () => (
