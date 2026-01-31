@@ -80,7 +80,7 @@ export const posts: Post[] = [
     createdAt: new Date(),
     updatedAt: new Date(),
     sender: '69469337bda8e6485e5c88e8',
-    title: 'my sheep trip',
+    title: 'My sheep trip',
     mapLink:
       'https://www.google.com/maps/d/embed?mid=101CRKWQbwExAnzfudZWBECB4XBGr8Qg&ehbc=2E312F&noprof=1',
     price: 800,
@@ -103,7 +103,7 @@ export const posts: Post[] = [
     createdAt: new Date(),
     updatedAt: new Date(),
     sender: '69469337bda8e6485e5c88e8',
-    title: 'traveling in capri',
+    title: 'Traveling in capri',
     mapLink:
       'https://www.google.com/maps/d/embed?mid=101CRKWQbwExAnzfudZWBECB4XBGr8Qg&ehbc=2E312F&noprof=1',
     price: 1200,
