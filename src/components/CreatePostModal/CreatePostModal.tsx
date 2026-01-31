@@ -18,8 +18,10 @@ import style from "./CreatePostModal.styles.ts";
 import GenericModal from "../GenericModal/index.ts";
 import { useForm, Controller } from "react-hook-form";
 import { GoogleMaps } from "../Icons/index.ts";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postService } from "../../services/postService";
+import { QUERY_KEYS } from "../../constants/queryKeys";
+import { useAuth } from "../../contexts/AuthContext.jsx";
 
 export interface CreatePostFormData {
 	title: string;
@@ -37,14 +39,14 @@ export interface CreatePostFormData {
 interface CreatePostModalProps {
 	isModalOpen: boolean;
 	setIsModalOpen: (isOpen: boolean) => void;
-	refetchPosts: () => void;
 }
 
 const CreatePostModal: React.FC<CreatePostModalProps> = ({
 	isModalOpen,
 	setIsModalOpen,
-	refetchPosts,
 }) => {
+	const { userId } = useAuth();
+	const queryClient = useQueryClient();
 	const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
 
 	const {
@@ -69,7 +71,12 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
 		mutationFn: (formData: FormData) => postService.createPost(formData),
 		onSuccess: () => {
 			handleCloseModal();
-			refetchPosts();
+			queryClient.invalidateQueries({
+				queryKey: [QUERY_KEYS.POSTS],
+			});
+			queryClient.invalidateQueries({
+				queryKey: [QUERY_KEYS.POSTS_BY_USER, userId],
+			});
 		},
 	});
 
@@ -119,7 +126,6 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
 	};
 
 	const onSubmit = (data: CreatePostFormData) => {
-		// Create FormData for multipart/form-data upload
 		const formData = new FormData();
 		formData.append("title", data.title);
 		formData.append("mapLink", data.mapLink);
