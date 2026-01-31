@@ -47,11 +47,11 @@ const AddComment: React.FC<Props> = ({ postId, onAddComment }) => {
   const handleSend = () => {
     const trimmedText = text.trim();
 
-    if (!trimmedText) return;
+    if (trimmedText) {
+      createComment({ post: postId, text: trimmedText });
 
-    createComment({ post: postId, text: trimmedText });
-
-    setText('');
+      setText('');
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
