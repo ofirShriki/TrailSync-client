@@ -128,6 +128,17 @@ const Login = () => {
 					{isPending ? <CircularProgress size={24} /> : "Log In"}
 				</Button>
 			</Box>
+
+			<Typography sx={styles.signUpText}>
+				Don't have an account?{" "}
+				<Button
+					variant="text"
+					color="primary"
+					onClick={() => navigate(PATHS.REGISTER)}
+				>
+					Sign Up
+				</Button>
+			</Typography>
 		</Box>
 	);
 };

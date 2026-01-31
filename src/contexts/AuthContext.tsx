@@ -13,6 +13,7 @@ import {
 } from "../constants/localStorage";
 import { authService } from "../services/authService";
 import { isTokenValid } from "../services/axiosInstance";
+import userService from "../services/userService";
 
 interface AuthContextType {
 	isAuthenticated: boolean;
@@ -39,14 +40,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			setIsAuthenticated(false);
 			setUserId(null);
 		} else {
-			if (isTokenValid()) {
-				setIsAuthenticated(true);
-				setUserId(userId);
+			if (isTokenValid() && userId) {
+				try {
+					await userService.getUserById(userId);
+					setIsAuthenticated(true);
+					setUserId(userId);
+				} catch (error) {
+					console.log("User validation failed:", error);
+					logout();
+				}
 			} else {
 				try {
 					await refreshAuth();
+					const storedUserId = localStorage.getItem(USER_ID);
+
+					if (storedUserId) {
+						await userService.getUserById(storedUserId);
+					}
 				} catch (error) {
-					console.log("Failed to refresh token:", error);
+					console.log("Failed to refresh token or validate user:", error);
 					logout();
 				}
 			}
@@ -74,8 +86,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 	const refreshAuth = async () => {
 		try {
-            const tokens = await authService.refreshToken();
-            
+			const tokens = await authService.refreshToken();
+
 			localStorage.setItem(ACCESS_TOKEN, tokens.token);
 			localStorage.setItem(REFRESH_TOKEN, tokens.refreshToken);
 			localStorage.setItem(TOKEN_TIMESTAMP, Date.now().toString());
