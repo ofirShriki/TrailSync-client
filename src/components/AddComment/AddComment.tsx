@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
 import { Box, Avatar, TextField, IconButton } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-import type { Comment } from '../../types/comment';
 import styles from './AddComment.styles';
 import { useAuth } from '../../contexts/AuthContext';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '../../constants/queryKeys';
 import userService from '../../services/userService';
+import commetService, { type CreateCommentData } from '../../services/commentService';
 
 type Props = {
   postId: string;
-  onAddComment: (comment: Comment) => void;
 };
 
-const AddComment: React.FC<Props> = ({ postId, onAddComment }) => {
-  const [text, setText] = useState('');
-
+const AddComment: React.FC<Props> = ({ postId }) => {
   const { userId } = useAuth();
+  const queryClient = useQueryClient();
+  const [text, setText] = useState('');
 
   const { data: currentUser } = useQuery({
     queryKey: [QUERY_KEYS.USER_BY_ID, userId],
@@ -24,23 +23,30 @@ const AddComment: React.FC<Props> = ({ postId, onAddComment }) => {
     enabled: !!userId,
   });
 
+  const { mutate: createComment, isPending: isLoading } = useMutation({
+    mutationFn: (data: CreateCommentData) => commetService.createComment(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.POSTS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.POSTS_BY_USER, userId],
+      });
+    },
+  });
+
   if (!currentUser) {
     return null;
   }
 
   const handleSend = () => {
-    if (text.trim()) {
-      const newComment: Comment = {
-        id: Date.now().toString(),
-        postId,
-        userId: currentUser.id,
-        text: text.trim(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      onAddComment(newComment);
-      setText('');
-    }
+    const trimmedText = text.trim();
+
+    if (!trimmedText) return;
+
+    createComment({ post: postId, text: trimmedText });
+
+    setText('');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -70,7 +76,12 @@ const AddComment: React.FC<Props> = ({ postId, onAddComment }) => {
         size="small"
         sx={styles.input}
       />
-      <IconButton color="primary" onClick={handleSend} disabled={!text.trim()} sx={styles.button}>
+      <IconButton
+        color="primary"
+        onClick={handleSend}
+        disabled={!text.trim() || isLoading}
+        sx={styles.button}
+      >
         <SendIcon />
       </IconButton>
     </Box>

@@ -26,7 +26,6 @@ interface PostProperties {
 const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
   const firstPhoto = post.photos[0];
   const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState(post.comments ?? []);
 
   return (
     <Card onClick={onCardClick} sx={styles.root}>
@@ -69,7 +68,7 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
             <ChatBubbleOutlineIcon fontSize="small" color="primary" />
           </IconButton>
           <Typography variant="body2" color="text.secondary">
-            {comments.length}
+            {post.comments?.length}
           </Typography>
         </Box>
 
@@ -85,13 +84,8 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
 
       {showComments && (
         <Box sx={{ padding: 2 }} onClick={(e) => e.stopPropagation()}>
-          <CommentList comments={comments} />
-          <AddComment
-            postId={post.id}
-            onAddComment={(newComment) => {
-              setComments((prev) => [...prev, newComment]);
-            }}
-          />
+          {post.comments && <CommentList comments={post.comments} />}
+          <AddComment postId={post.id} />
         </Box>
       )}
     </Card>

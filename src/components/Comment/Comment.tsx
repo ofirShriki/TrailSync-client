@@ -1,30 +1,24 @@
+import type React from 'react';
 import { Box, Avatar, Typography } from '@mui/material';
 import styles from './Comment.styles';
 import type { Comment } from '../../types/comment';
 import { useQuery } from '@tanstack/react-query';
-import { QUERY_KEYS } from '../../constants/queryKeys';
 import userService from '../../services/userService';
+import { QUERY_KEYS } from '../../constants/queryKeys';
 
 type CommentProps = {
   comment: Comment;
 };
 
 const CommentComponent: React.FC<CommentProps> = ({ comment }) => {
-  //todo: add populate user in get comments on server
-  //   const { data: commentWriter } = useQuery({
-  //     queryKey: [QUERY_KEYS.USER_BY_ID, comment.userId],
-  //     queryFn: () => userService.getUserById(comment.userId),
-  //   });
+  const { data: commentWriter } = useQuery({
+    queryKey: [QUERY_KEYS.USER_BY_ID, comment.user],
+    queryFn: () => userService.getUserById(comment.user),
+  });
 
-  //   if (!commentWriter) {
-  //     return null;
-  //   }
-
-  const commentWriter = {
-    id: comment.userId,
-    username: 'User',
-    profilePicture: undefined,
-  };
+  if (!commentWriter) {
+    return null;
+  }
 
   const displayName = commentWriter.username;
 
@@ -46,7 +40,7 @@ const CommentComponent: React.FC<CommentProps> = ({ comment }) => {
   //todo: put in util
   const profileSrc = commentWriter.profilePicture
     ? `${import.meta.env.VITE_SERVER_URL}/${commentWriter.profilePicture}`
-    : undefined;
+    : '/avatars/default.png';
 
   return (
     <Box sx={styles.root}>
