@@ -25,7 +25,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
 		<Box sx={styles.root}>
 			<Box
 				component="img"
-				src={photos[currentImageIndex]}
+				src={`${import.meta.env.VITE_SERVER_URL}/${photos[currentImageIndex]}`}
 				alt={alt}
 				sx={styles.image}
 			/>

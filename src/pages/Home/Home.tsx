@@ -1,15 +1,26 @@
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Fab, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import PostList from "../../components/PostList";
-import { posts } from "../../constants/staticInfo";
 import styles from "./Home.styles";
 import CreatePostModal from "../../components/CreatePostModal";
+import { postService } from "../../services/postService";
+import type { Post } from "../../types/post";
 
 const Home: React.FC = () => {
 	const [isHovered, setIsHovered] = useState(false);
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+	const [posts, setPosts] = useState<Post[]>([]);
+
+	useEffect(() => {
+		(async () => {
+			const fetchPosts = await postService.getAllPosts();
+			setPosts(fetchPosts);
+		})().catch(err => {
+			console.error("Error fetching posts:", err);
+		});
+	}, []);
 
 	const handleCreatePost = () => {
 		setIsCreateModalOpen(true);
@@ -17,7 +28,7 @@ const Home: React.FC = () => {
 
 	return (
 		<Box sx={styles.root}>
-			<PostList posts={[...posts, ...posts, ...posts]} />
+			<PostList posts={[...posts]} />
 			<Fab
 				color="primary"
 				onClick={handleCreatePost}
