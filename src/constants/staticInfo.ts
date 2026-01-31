@@ -1,0 +1,136 @@
+import sheepage from '../assets/photos/sheeptrip.png';
+import water from '../assets/photos/waterTravel.png';
+import london from '../assets/photos/london.png';
+import type { Comment } from '../types/comment';
+import type { Post } from '../types/post';
+
+const postOneComments: Comment[] = [
+  {
+    id: '1',
+    text: 'This looks absolutely amazing! The scenery is breathtaking. Would love to join on the next trip!',
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    postId: '1',
+    userId: '2',
+    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+  },
+  {
+    id: '2',
+    text: "How much hiking is involved? I'm interested but want to know the difficulty level.",
+    createdAt: new Date(Date.now() - 1.5 * 24 * 60 * 60 * 1000),
+    postId: '1',
+    userId: '3',
+    updatedAt: new Date(Date.now() - 1.5 * 24 * 60 * 60 * 1000),
+  },
+  {
+    id: '3',
+    text: 'Went on this trip last year, it was unforgettable! Highly recommend it to anyone.',
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    postId: '1',
+    userId: '4',
+    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+  },
+  {
+    id: '4',
+    text: 'Are there any vegan meal options available? This is beautiful but I have dietary restrictions.',
+    createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+    postId: '1',
+    userId: '5',
+    updatedAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+  },
+  {
+    id: '5',
+    text: "Just booked! Can't wait to experience this adventure. See you soon!",
+    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
+    postId: '1',
+    userId: '6',
+    updatedAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
+  },
+];
+
+const postTwoComments: Comment[] = [
+  {
+    id: '6',
+    text: "Amazing photos — London's skyline never gets old. Would love recommendations for a good walking route!",
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    postId: '3',
+    userId: '7',
+    updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+  },
+  {
+    id: '7',
+    text: 'If you plan to visit museums, get an early start to avoid queues. The public transport is excellent.',
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    postId: '3',
+    userId: '8',
+    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+  },
+  {
+    id: '8',
+    text: 'Booked this for next weekend — any tips on nearby cafes or local markets?',
+    createdAt: new Date(Date.now() - 10 * 60 * 60 * 1000),
+    postId: '3',
+    userId: '9',
+    updatedAt: new Date(Date.now() - 10 * 60 * 60 * 1000),
+  },
+];
+
+export const posts: Post[] = [
+  {
+    id: '1',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    sender: '69469337bda8e6485e5c88e8',
+    title: 'my sheep trip',
+    mapLink: 'https://www.google.com/maps',
+    price: 800,
+    numberOfDays: 5,
+    location: {
+      country: 'Israel',
+      city: 'Ahkelon',
+    },
+    description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+       Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+       Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+       Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+       Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+       Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`,
+    photos: [sheepage],
+    comments: postOneComments,
+  },
+  {
+    id: '2',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    sender: '69469337bda8e6485e5c88e8',
+    title: 'traveling in capri',
+    mapLink:
+      'https://www.google.com/maps/d/viewer?hl=iw&mid=1EBRKYVuj7nT0URkwb0YG9VLSfZQ&ll=43.04267235411848%2C12.875370499999974&z=7',
+    price: 1200,
+    numberOfDays: 4,
+    location: {
+      country: 'Italy',
+      city: 'Capri',
+    },
+    description:
+      'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+    photos: [water],
+  },
+  {
+    id: '3',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    sender: '69469337bda8e6485e5c88e9',
+    title: 'London City Walk',
+    mapLink: 'https://www.google.com/maps/place/London',
+    price: 300,
+    numberOfDays: 2,
+    location: {
+      country: 'United Kingdom',
+      city: 'London',
+    },
+    description:
+      'Explore the historic streets of London with guided walks, local food stops, and iconic views across the Thames.',
+    photos: [london],
+    comments: postTwoComments,
+  },
+];
