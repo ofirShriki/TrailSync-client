@@ -97,7 +97,7 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <ChatBubbleOutlineIcon fontSize="small" color="action" />
+          <ChatBubbleOutlineIcon fontSize="small" color="primary" />
           <Typography variant="body2" color="text.secondary">
             {post.comments?.length ?? 0}
           </Typography>

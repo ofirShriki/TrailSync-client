@@ -31,7 +31,7 @@ const PostMetadata: React.FC<PostMetadataProps> = ({ location, numberOfDays, pri
     <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
       {itemsToDisplay.map(({ iconComponent: IconComponent, text }, index) => (
         <React.Fragment key={index}>
-          <IconComponent fontSize="small" color="action" />
+          <IconComponent fontSize="small" color="primary" />
           <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
             {text}
           </Typography>
