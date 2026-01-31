@@ -1,4 +1,4 @@
-import api from "./api";
+import axiosInstance from "./axiosInstance";
 import type { Post } from "../types/post";
 
 export interface CreatePostData {
@@ -27,7 +27,9 @@ export interface GetPostsFilters {
 
 export const postService = {
 	async getAllPosts(filters?: GetPostsFilters): Promise<Post[]> {
-		const response = await api.get<Post[]>("/post", { params: filters });
+		const response = await axiosInstance.get<Post[]>("/post", {
+			params: filters,
+		});
 		return response.data;
 	},
 };

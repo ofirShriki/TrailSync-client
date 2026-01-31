@@ -1,6 +1,7 @@
 const styles = {
 	root: {
 		position: "relative",
+		marginBottom: 10,
 	},
 
 	createButton: {

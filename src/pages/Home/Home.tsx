@@ -1,26 +1,25 @@
-import type React from "react";
-import { useEffect, useState } from "react";
-import { Box, Fab, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import PostList from "../../components/PostList";
-import styles from "./Home.styles";
+import { Box, Fab, Typography } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import type React from "react";
+import { useState } from "react";
 import CreatePostModal from "../../components/CreatePostModal";
+import PostList from "../../components/PostList";
+import { QUERY_KEYS } from "../../constants/queryKeys";
 import { postService } from "../../services/postService";
 import type { Post } from "../../types/post";
+import styles from "./Home.styles";
 
 const Home: React.FC = () => {
 	const [isHovered, setIsHovered] = useState(false);
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-	const [posts, setPosts] = useState<Post[]>([]);
 
-	useEffect(() => {
-		(async () => {
-			const fetchPosts = await postService.getAllPosts();
-			setPosts(fetchPosts);
-		})().catch(err => {
-			console.error("Error fetching posts:", err);
-		});
-	}, []);
+	const { data: posts = [], isLoading } = useQuery<Post[]>({
+		queryKey: [QUERY_KEYS.POSTS],
+		queryFn: async () => await postService.getAllPosts(),
+		refetchOnReconnect: false,
+		refetchOnWindowFocus: false,
+	});
 
 	const handleCreatePost = () => {
 		setIsCreateModalOpen(true);
@@ -28,7 +27,7 @@ const Home: React.FC = () => {
 
 	return (
 		<Box sx={styles.root}>
-			<PostList posts={[...posts]} />
+			<PostList posts={posts} isLoading={isLoading} />
 			<Fab
 				color="primary"
 				onClick={handleCreatePost}

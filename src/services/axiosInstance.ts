@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const api = axios.create({
+export const axiosInstance = axios.create({
 	baseURL: import.meta.env.VITE_SERVER_URL,
 	headers: {
 		"Content-Type": "application/json",
@@ -9,4 +9,4 @@ export const api = axios.create({
 
 // TODO handle tokens and refresh tokens
 
-export default api;
+export default axiosInstance;
