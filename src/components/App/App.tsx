@@ -1,14 +1,30 @@
-import type React from "react";
-import Navbar from "../Navbar/Navbar";
-import Home from "../Home/Home";
+import type React from 'react';
+import { Box } from '@mui/material';
+import Navbar from '../Navbar/Navbar';
+import Home from '../Home/Home';
 
 const App: React.FC = () => {
-	return (
-		<div>
-			<Navbar />
-			<Home />
-		</div>
-	);
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        height: '100vh',
+        overflow: 'hidden',
+      }}
+    >
+      <Navbar />
+
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          overflowY: 'auto',
+        }}
+      >
+        <Home />
+      </Box>
+    </Box>
+  );
 };
 
 export default App;
