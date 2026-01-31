@@ -2,9 +2,9 @@ import type React from 'react';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import Logo from '../Icons/Logo/Logo';
 import { Home } from '@mui/icons-material';
+import NavbarItem from './NavbarItem';
 
 const Navbar: React.FC = () => {
   return (
@@ -26,36 +26,13 @@ const Navbar: React.FC = () => {
         <Typography variant="h4">TrailSync</Typography>
       </Box>
 
-      <IconButton
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          gap: 1,
-          p: 1,
-          borderRadius: 1,
-          mb: 4, // spacing below the button
-        }}
-      >
-        <Home />
-        <Typography>Home</Typography>
-      </IconButton>
-
+      <NavbarItem route="/" icon={<Home />} label="Home" />
       <Box sx={{ flexGrow: 1 }} />
-
-      <IconButton
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          gap: 1,
-          p: 1,
-          borderRadius: 1,
-        }}
-      >
-        <Avatar alt="user name" src="/static/images/avatar/2.jpg" />
-        <Typography>Profile</Typography>
-      </IconButton>
+      <NavbarItem
+        route="/profile"
+        icon={<Avatar alt="user name" src="/static/images/avatar/2.jpg" />}
+        label="Profile"
+      />
     </Box>
   );
 };
