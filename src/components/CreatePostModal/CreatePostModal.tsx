@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	Box,
 	Typography,
@@ -6,8 +6,12 @@ import {
 	TextField,
 	Button,
 	InputAdornment,
+	Card,
+	CardMedia,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import CloseIcon from "@mui/icons-material/Close";
 import style from "./CreatePostModal.styles.ts";
 import GenericModal from "../GenericModal/index.ts";
 import { useForm, Controller } from "react-hook-form";
@@ -23,7 +27,7 @@ export interface CreatePostFormData {
 		country: string;
 	};
 	description: string;
-	photos: string[];
+	photos: File[];
 }
 
 interface CreatePostModalProps {
@@ -35,23 +39,69 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
 	isModalOpen,
 	setIsModalOpen,
 }) => {
+	const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
+
 	const {
 		control,
 		handleSubmit,
 		formState: { errors },
 		reset,
+		watch,
 	} = useForm<CreatePostFormData>({
 		mode: "onChange",
+		defaultValues: {
+			photos: [],
+		},
 	});
+
+	const photoFiles = watch("photos") || [];
 
 	const handleCloseModal = () => {
 		reset();
+		setPhotoPreviews([]);
 		setIsModalOpen(false);
+	};
+
+	const handlePhotoUpload = (
+		event: React.ChangeEvent<HTMLInputElement>,
+		onChange: (value: File[]) => void,
+	) => {
+		const files = event.target.files;
+
+		if (files) {
+			const newFiles = Array.from(files);
+			const newPreviews: string[] = [];
+
+			newFiles.forEach(file => {
+				const reader = new FileReader();
+				reader.onloadend = () => {
+					newPreviews.push(reader.result as string);
+
+					if (newPreviews.length === newFiles.length) {
+						setPhotoPreviews(prev => [...prev, ...newPreviews]);
+					}
+				};
+
+				reader.readAsDataURL(file);
+			});
+
+			const updatedFiles = [...photoFiles, ...newFiles];
+			onChange(updatedFiles);
+		}
+	};
+
+	const handleRemovePhoto = (
+		index: number,
+		onChange: (value: File[]) => void,
+	) => {
+		const updatedFiles = photoFiles.filter((_, i) => i !== index);
+		onChange(updatedFiles);
+		setPhotoPreviews(prev => prev.filter((_, i) => i !== index));
 	};
 
 	const onSubmit = (data: CreatePostFormData) => {
 		console.log("Form submitted:", data);
-		// TODO: Handle post creation
+		// TODO: Handle post creation logic here
 		handleCloseModal();
 	};
 
@@ -203,6 +253,66 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({
 							error={!!errors.description}
 							helperText={errors.description?.message}
 						/>
+					)}
+				/>
+
+				<Controller
+					name="photos"
+					control={control}
+					rules={{
+						validate: value =>
+							(value && value.length > 0) || "At least one photo is required",
+					}}
+					render={({ field: { onChange } }) => (
+						<Box>
+							<Button
+								variant="outlined"
+								component="label"
+								fullWidth
+								startIcon={<AddPhotoAlternateIcon />}
+								sx={style.addPhotosButton}
+							>
+								Add Photos
+								<input
+									type="file"
+									hidden
+									accept="image/*"
+									multiple
+									onChange={e => handlePhotoUpload(e, onChange)}
+								/>
+							</Button>
+							{errors.photos && (
+								<Typography
+									color="error"
+									variant="caption"
+									sx={style.errorText}
+								>
+									{errors.photos.message}
+								</Typography>
+							)}
+
+							{photoPreviews.length > 0 && (
+								<Box sx={style.photoPreviewContainer}>
+									{photoPreviews.map((preview, index) => (
+										<Card key={index} sx={style.photoCard}>
+											<CardMedia
+												component="img"
+												image={preview}
+												alt={`Preview ${index + 1}`}
+												sx={style.photoImage}
+											/>
+											<IconButton
+												size="small"
+												onClick={() => handleRemovePhoto(index, onChange)}
+												sx={style.photoRemoveButton}
+											>
+												<CloseIcon fontSize="small" />
+											</IconButton>
+										</Card>
+									))}
+								</Box>
+							)}
+						</Box>
 					)}
 				/>
 
