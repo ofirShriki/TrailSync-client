@@ -7,12 +7,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '../../constants/queryKeys';
 import userService from '../../services/userService';
 import commetService, { type CreateCommentData } from '../../services/commentService';
+import type { Comment } from '../../types/comment';
 
 type Props = {
   postId: string;
+  onAddComment?: (comment: Comment) => void;
 };
 
-const AddComment: React.FC<Props> = ({ postId }) => {
+const AddComment: React.FC<Props> = ({ postId, onAddComment }) => {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
   const [text, setText] = useState('');
@@ -25,7 +27,9 @@ const AddComment: React.FC<Props> = ({ postId }) => {
 
   const { mutate: createComment, isPending: isLoading } = useMutation({
     mutationFn: (data: CreateCommentData) => commetService.createComment(data),
-    onSuccess: () => {
+    onSuccess: (newComment) => {
+      onAddComment?.(newComment);
+
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.POSTS],
       });
