@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
     <AppBar
       position="static"
       sx={{
-        backgroundColor: (theme) => theme.palette.neutral.light,
+        backgroundColor: (theme) => theme.palette.secondary.dark,
         color: (theme) => theme.palette.neutral.dark,
       }}
     >

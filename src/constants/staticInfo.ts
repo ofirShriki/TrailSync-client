@@ -81,7 +81,8 @@ export const posts: Post[] = [
     updatedAt: new Date(),
     sender: '69469337bda8e6485e5c88e8',
     title: 'my sheep trip',
-    mapLink: 'https://www.google.com/maps',
+    mapLink:
+      'https://www.google.com/maps/d/embed?mid=101CRKWQbwExAnzfudZWBECB4XBGr8Qg&ehbc=2E312F&noprof=1',
     price: 800,
     numberOfDays: 5,
     location: {
@@ -104,7 +105,7 @@ export const posts: Post[] = [
     sender: '69469337bda8e6485e5c88e8',
     title: 'traveling in capri',
     mapLink:
-      'https://www.google.com/maps/d/viewer?hl=iw&mid=1EBRKYVuj7nT0URkwb0YG9VLSfZQ&ll=43.04267235411848%2C12.875370499999974&z=7',
+      'https://www.google.com/maps/d/embed?mid=101CRKWQbwExAnzfudZWBECB4XBGr8Qg&ehbc=2E312F&noprof=1',
     price: 1200,
     numberOfDays: 4,
     location: {
@@ -121,7 +122,8 @@ export const posts: Post[] = [
     updatedAt: new Date(),
     sender: '69469337bda8e6485e5c88e9',
     title: 'London City Walk',
-    mapLink: 'https://www.google.com/maps/place/London',
+    mapLink:
+      'https://www.google.com/maps/d/embed?mid=101CRKWQbwExAnzfudZWBECB4XBGr8Qg&ehbc=2E312F&noprof=1',
     price: 300,
     numberOfDays: 2,
     location: {

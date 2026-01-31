@@ -16,13 +16,14 @@ import {
 
 interface PostProperties {
   post: Post;
+  onCardClick?: () => void;
 }
 
-const PostCard: React.FC<PostProperties> = ({ post }: PostProperties) => {
+const PostCard: React.FC<PostProperties> = ({ post, onCardClick }: PostProperties) => {
   const firstPhoto = post.photos[0];
 
   return (
-    <Card sx={{ width: '100%', borderRadius: 3 }}>
+    <Card sx={{ width: '100%', borderRadius: 3, cursor: 'pointer' }} onClick={onCardClick}>
       <Box sx={{ position: 'relative' }}>
         <CardMedia component="img" height="180" image={firstPhoto} alt={post.title} />
       </Box>
