@@ -1,5 +1,5 @@
 import React from "react";
-import GenericModal from "../GenericModal/GenericModal";
+import GenericModal from "../GenericModal";
 import type { User } from "../../types/user";
 
 interface EditProfileModalProps {
@@ -14,7 +14,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 }) => {
 	return (
 		<GenericModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
-			TODO: add edit profile form here
+			dsad
 		</GenericModal>
 	);
 };
