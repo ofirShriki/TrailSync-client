@@ -9,21 +9,26 @@ import Navbar from "../Navbar";
 import Home from "../../pages/Home";
 import Profile from "../../pages/Profile";
 import styles from "./App.styles";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const App = () => {
+	const queryClient = new QueryClient();
+
 	return (
-		<Router>
-			<Box sx={styles.root}>
-				<Navbar />
-				<Box sx={styles.pageContainer}>
-					<Routes>
-						<Route path="/" element={<Home />} />
-						<Route path="/profile" element={<Profile />} />
-						<Route path="*" element={<Navigate to="/" replace />} />
-					</Routes>
+		<QueryClientProvider client={queryClient}>
+			<Router>
+				<Box sx={styles.root}>
+					<Navbar />
+					<Box sx={styles.pageContainer}>
+						<Routes>
+							<Route path="/" element={<Home />} />
+							<Route path="/profile" element={<Profile />} />
+							<Route path="*" element={<Navigate to="/" replace />} />
+						</Routes>
+					</Box>
 				</Box>
-			</Box>
-		</Router>
+			</Router>
+		</QueryClientProvider>
 	);
 };
 

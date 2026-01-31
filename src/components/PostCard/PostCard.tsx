@@ -44,7 +44,7 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
 
 				<CardMedia
 					component="img"
-					image={firstPhoto}
+					image={`${import.meta.env.VITE_SERVER_URL}/${firstPhoto}`}
 					alt={post.title}
 					sx={styles.media}
 				/>
