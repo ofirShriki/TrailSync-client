@@ -5,6 +5,7 @@ import type { Comment } from '../../types/comment';
 import { useQuery } from '@tanstack/react-query';
 import userService from '../../services/userService';
 import { QUERY_KEYS } from '../../constants/queryKeys';
+import { getProfilePicturePath } from '../../utils/userUtils';
 
 type CommentProps = {
   comment: Comment;
@@ -37,14 +38,9 @@ const CommentComponent: React.FC<CommentProps> = ({ comment }) => {
     return `${minutes}m`;
   })();
 
-  //todo: put in util
-  const profileSrc = commentWriter.profilePicture
-    ? `${import.meta.env.VITE_SERVER_URL}/${commentWriter.profilePicture}`
-    : '/avatars/default.png';
-
   return (
     <Box sx={styles.root}>
-      <Avatar src={profileSrc ?? '/avatars/default.png'} />
+      <Avatar src={getProfilePicturePath(commentWriter.profilePicture)} />
       <Box sx={styles.body}>
         <Box sx={styles.header}>
           <Typography component="span" sx={styles.username}>

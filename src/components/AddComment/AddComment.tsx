@@ -8,6 +8,7 @@ import { QUERY_KEYS } from '../../constants/queryKeys';
 import userService from '../../services/userService';
 import commetService, { type CreateCommentData } from '../../services/commentService';
 import type { Comment } from '../../types/comment';
+import { getProfilePicturePath } from '../../utils/userUtils';
 
 type Props = {
   postId: string;
@@ -60,13 +61,9 @@ const AddComment: React.FC<Props> = ({ postId, onAddComment }) => {
     }
   };
 
-  const userProfilePicture = currentUser.profilePicture
-    ? `${import.meta.env.VITE_SERVER_URL}/${currentUser.profilePicture}`
-    : undefined;
-
   return (
     <Box sx={styles.root}>
-      <Avatar src={userProfilePicture ?? '/avatars/default.png'} />
+      <Avatar src={getProfilePicturePath(currentUser.profilePicture)} />
       <TextField
         fullWidth
         multiline
