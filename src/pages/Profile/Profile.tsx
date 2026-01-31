@@ -1,13 +1,6 @@
 import type React from "react";
 import Box from "@mui/material/Box";
-import {
-	Avatar,
-	Button,
-	Divider,
-	IconButton,
-	Skeleton,
-	Typography,
-} from "@mui/material";
+import { Avatar, Button, Divider, IconButton, Typography } from "@mui/material";
 import PostList from "../../components/PostList";
 import { Add, Edit } from "@mui/icons-material";
 import { useState } from "react";
@@ -15,7 +8,7 @@ import EditProfileModal from "../../components/EditProfileModal";
 import CreatePostModal from "../../components/CreatePostModal";
 import styles from "./Profile.styles";
 import { useAuth } from "../../contexts/AuthContext";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../../constants/queryKeys";
 import userService from "../../services/userService";
 import postService from "../../services/postService";
@@ -23,13 +16,10 @@ import postService from "../../services/postService";
 const Profile: React.FC = () => {
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-	const [imageRefreshKey, setImageRefreshKey] = useState("");
-	const [imageLoading, setImageLoading] = useState(false);
 	const { userId } = useAuth();
-	const queryClient = useQueryClient();
 
 	const { data: user } = useQuery({
-		queryKey: [QUERY_KEYS.USER_BY_ID, userId],
+		queryKey: [QUERY_KEYS.USER_BY_ID],
 		enabled: !!userId,
 		queryFn: () => userService.getUserById(userId!),
 	});
@@ -40,30 +30,15 @@ const Profile: React.FC = () => {
 		queryFn: () => postService.getAllPosts({ sender: userId! }),
 	});
 
-	const handleRefetchProfile = () => {
-		queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER_BY_ID, userId] });
-		setImageLoading(true);
-		setImageRefreshKey(Date.now().toString());
-	};
-
 	return (
 		user && (
 			<Box>
 				<Box sx={styles.header}>
 					<Box sx={styles.headerInfo}>
-						{imageLoading && (
-							<Skeleton
-								variant="circular"
-								width={100}
-								height={100}
-								sx={styles.avatar}
-							/>
-						)}
 						<Avatar
-							src={`${import.meta.env.VITE_SERVER_URL}/${user?.profilePicture}${imageRefreshKey ? `?t=${imageRefreshKey}` : ""}`}
+							src={`${import.meta.env.VITE_SERVER_URL}/${user?.profilePicture}`}
 							alt={user?.username}
-							sx={{ ...styles.avatar, display: imageLoading ? "none" : "flex" }}
-							onLoad={() => setImageLoading(false)}
+							sx={styles.avatar}
 						/>
 						<Box>
 							<Box sx={styles.usernameContainer}>
@@ -97,14 +72,11 @@ const Profile: React.FC = () => {
 					</Button>
 				</Box>
 				<Divider sx={styles.divider} />
-
 				{posts && <PostList posts={posts} />}
-
 				<EditProfileModal
 					isModalOpen={isEditModalOpen}
 					setIsModalOpen={setIsEditModalOpen}
 					user={user}
-					onSuccess={handleRefetchProfile}
 				/>
 				<CreatePostModal
 					isModalOpen={isCreateModalOpen}
@@ -114,4 +86,5 @@ const Profile: React.FC = () => {
 		)
 	);
 };
+
 export default Profile;
