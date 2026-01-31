@@ -14,49 +14,34 @@ import {
 	type RouteType,
 } from "../../constants/routes";
 import { AuthProvider, useAuth } from "../../contexts/AuthContext";
-import { CircularProgress } from "@mui/material";
 
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
 	const { isAuthenticated, isLoading } = useAuth();
-
-	if (isLoading) {
+	if (!isLoading) {
 		return (
-			<Box
-				sx={{
-					display: "flex",
-					justifyContent: "center",
-					alignItems: "center",
-					height: "100vh",
-				}}
-			>
-				<CircularProgress />
+			<Box sx={styles.root}>
+				{isAuthenticated && <Navbar />}
+				<Box sx={styles.pageContainer}>
+					<Routes>
+						{UNAUTHENTICATED_ROUTES.map(
+							({ path, element: Component }: RouteType) => (
+								<Route key={path} path={path} element={<Component />} />
+							),
+						)}
+						{isAuthenticated ? (
+							ROUTES.map(({ path, element: Component }: RouteType) => (
+								<Route key={path} path={path} element={<Component />} />
+							))
+						) : (
+							<Route path="*" element={<Navigate to="/" replace />} />
+						)}
+					</Routes>
+				</Box>
 			</Box>
 		);
 	}
-
-	return (
-		<Box sx={styles.root}>
-			{isAuthenticated && <Navbar />}
-			<Box sx={styles.pageContainer}>
-				<Routes>
-					{UNAUTHENTICATED_ROUTES.map(
-						({ path, element: Component }: RouteType) => (
-							<Route key={path} path={path} element={<Component />} />
-						),
-					)}
-					{isAuthenticated ? (
-						ROUTES.map(({ path, element: Component }: RouteType) => (
-							<Route key={path} path={path} element={<Component />} />
-						))
-					) : (
-						<Route path="*" element={<Navigate to="/" replace />} />
-					)}
-				</Routes>
-			</Box>
-		</Box>
-	);
 };
 
 const App = () => {

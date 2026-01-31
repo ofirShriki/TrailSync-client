@@ -28,6 +28,23 @@ const styles = {
 	submitButton: {
 		marginTop: 2,
 	},
+
+	signUpText: {
+		marginTop: 3,
+		display: "flex",
+		alignItems: "center",
+		fontSize: 16,
+
+		"& .MuiButtonBase-root": {
+			fontSize: 16,
+			paddingY: 0,
+
+			"&:hover": {
+				textDecoration: "underline",
+				backgroundColor: "transparent",
+			},
+		},
+	},
 };
 
 export default styles;

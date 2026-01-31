@@ -6,6 +6,13 @@ export interface LoginData {
 	password: string;
 }
 
+export interface RegisterData {
+	email: string;
+	password: string;
+	username: string;
+	profilePicture: File | string;
+}
+
 export interface AuthTokens {
 	token: string;
 	refreshToken: string;
@@ -21,6 +28,36 @@ export const authService = {
 		const response = await axiosInstance.post<LoginResponse>(
 			"/auth/login",
 			data,
+		);
+		return response.data;
+	},
+
+	async register(data: RegisterData): Promise<LoginResponse> {
+		const response = await axiosInstance.post<LoginResponse>(
+			"/auth/register",
+			data,
+		);
+		return response.data;
+	},
+
+	async registerWithFile(data: RegisterData): Promise<LoginResponse> {
+		const formData = new FormData();
+		formData.append("email", data.email);
+		formData.append("password", data.password);
+		formData.append("username", data.username);
+
+		if (data.profilePicture instanceof File) {
+			formData.append("profilePicture", data.profilePicture);
+		}
+
+		const response = await axiosInstance.post<LoginResponse>(
+			"/auth/register",
+			formData,
+			{
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			},
 		);
 		return response.data;
 	},
