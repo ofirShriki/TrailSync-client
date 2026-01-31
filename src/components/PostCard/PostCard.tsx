@@ -1,76 +1,109 @@
-import type React from "react";
-import PostMetadata from "./PostMetadata";
-import type { Post } from "../../types/post";
-import { GoogleMaps } from "../Icons/";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import type React from 'react';
+import PostMetadata from './PostMetadata';
+import type { Post } from '../../types/post';
+import { GoogleMaps } from '../Icons/';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import {
-	Card,
-	CardMedia,
-	CardContent,
-	CardActions,
-	Typography,
-	Box,
-	Divider,
-	IconButton,
-} from "@mui/material";
-import styles from "./PostCard.styles";
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Typography,
+  Box,
+  Divider,
+  IconButton,
+  Avatar,
+} from '@mui/material';
+import styles from './PostCard.styles';
+import { useState } from 'react';
+import CommentList from '../CommentList';
+import AddComment from '../AddComment';
+import { getProfilePicturePath } from '../../utils/userUtils';
 
 interface PostProperties {
-	post: Post;
-	onCardClick?: () => void;
+  post: Post;
+  onCardClick?: () => void;
 }
 
 const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
-	const firstPhoto = post.photos[0];
+  const firstPhoto = post.photos[0];
+  const [showComments, setShowComments] = useState(false);
 
-	return (
-		<Card onClick={onCardClick} sx={styles.root}>
-			<Box sx={styles.cardContentContainer}>
-				<CardContent sx={styles.cardContent}>
-					<Typography variant="h6" sx={styles.postTitle}>
-						{post.title}
-					</Typography>
+  return (
+    <Card onClick={onCardClick} sx={styles.root}>
+      <Box sx={styles.cardContentContainer}>
+        <CardContent sx={styles.cardContent}>
+          <Box sx={styles.authorRow}>
+            <Avatar
+              src={getProfilePicturePath(post.sender?.profilePicture)}
+              sx={styles.authorAvatar}
+            />
+            <Box>
+              <Typography variant="subtitle2" sx={styles.authorName}>
+                {post.sender?.username ?? 'Unknown'}
+              </Typography>
+            </Box>
+          </Box>
 
-					<PostMetadata
-						location={post.location}
-						numberOfDays={post.numberOfDays}
-						price={post.price}
-					/>
+          <Typography variant="h6" sx={styles.postTitle}>
+            {post.title}
+          </Typography>
 
-					<Typography variant="body1" sx={styles.postDescription}>
-						{post.description}
-					</Typography>
-				</CardContent>
+          <PostMetadata
+            location={post.location}
+            numberOfDays={post.numberOfDays}
+            price={post.price}
+          />
 
-				<CardMedia
-					component="img"
-					image={`${import.meta.env.VITE_SERVER_URL}/${firstPhoto}`}
-					alt={post.title}
-					sx={styles.media}
-				/>
-			</Box>
+          <Typography variant="body1" sx={styles.postDescription}>
+            {post.description}
+          </Typography>
+        </CardContent>
 
-			<Divider />
+        <CardMedia
+          component="img"
+          image={`${import.meta.env.VITE_SERVER_URL}/${firstPhoto}`}
+          alt={post.title}
+          sx={styles.media}
+        />
+      </Box>
 
-			<CardActions sx={styles.actions}>
-				<Box sx={styles.comments}>
-					<ChatBubbleOutlineIcon fontSize="small" color="primary" />
-					<Typography variant="body2" color="text.secondary">
-						{post.comments?.length ?? 0}
-					</Typography>
-				</Box>
+      <Divider />
 
-				<IconButton
-					component="a"
-					href={post.mapLink}
-					onClick={e => e.stopPropagation()}
-					size="small"
-				>
-					<Box component={GoogleMaps} />
-				</IconButton>
-			</CardActions>
-		</Card>
-	);
+      <CardActions sx={styles.actions}>
+        <Box sx={styles.comments}>
+          <IconButton
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowComments((s) => !s);
+            }}
+          >
+            <ChatBubbleOutlineIcon fontSize="small" color="primary" />
+          </IconButton>
+          <Typography variant="body2" color="text.secondary">
+            {post.comments?.length}
+          </Typography>
+        </Box>
+
+        <IconButton
+          component="a"
+          href={post.mapLink}
+          onClick={(e) => e.stopPropagation()}
+          size="small"
+        >
+          <Box component={GoogleMaps} />
+        </IconButton>
+      </CardActions>
+
+      {showComments && (
+        <Box sx={{ padding: 2 }} onClick={(e) => e.stopPropagation()}>
+          {post.comments && <CommentList comments={post.comments} />}
+          <AddComment postId={post.id} />
+        </Box>
+      )}
+    </Card>
+  );
 };
 
 export default PostCard;

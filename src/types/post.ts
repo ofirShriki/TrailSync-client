@@ -1,8 +1,9 @@
 import type { Comment } from './comment';
+import type { User } from './user';
 
 export interface Post {
   id: string;
-  sender: string;
+  sender: User;
   title: string;
   mapLink: string;
   price: number;
