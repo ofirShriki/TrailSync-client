@@ -12,6 +12,7 @@ import {
   Box,
   Divider,
   IconButton,
+  Avatar,
 } from '@mui/material';
 import styles from './PostCard.styles';
 import { useState } from 'react';
@@ -27,10 +28,23 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
   const firstPhoto = post.photos[0];
   const [showComments, setShowComments] = useState(false);
 
+  const authorProfile = post.sender?.profilePicture
+    ? `${import.meta.env.VITE_SERVER_URL}/${post.sender.profilePicture}`
+    : undefined;
+
   return (
     <Card onClick={onCardClick} sx={styles.root}>
       <Box sx={styles.cardContentContainer}>
         <CardContent sx={styles.cardContent}>
+          <Box sx={styles.authorRow}>
+            <Avatar src={authorProfile} sx={styles.authorAvatar} />
+            <Box>
+              <Typography variant="subtitle2" sx={styles.authorName}>
+                {post.sender?.username ?? 'Unknown'}
+              </Typography>
+            </Box>
+          </Box>
+
           <Typography variant="h6" sx={styles.postTitle}>
             {post.title}
           </Typography>

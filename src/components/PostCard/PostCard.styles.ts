@@ -1,67 +1,82 @@
 const styles = {
-	root: {
-		width: "100%",
-		cursor: "pointer",
-		borderRadius: 4,
-		overflow: "hidden",
-		transition: "transform 0.15s ease, box-shadow 0.15s ease",
-		padding: 1,
+  root: {
+    width: '100%',
+    cursor: 'pointer',
+    borderRadius: 4,
+    overflow: 'hidden',
+    transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+    padding: 1,
 
-		"&:hover": {
-			transform: "translateY(-2px)",
-			boxShadow: 4,
-		},
-	},
+    '&:hover': {
+      transform: 'translateY(-2px)',
+      boxShadow: 4,
+    },
+  },
 
-	cardContentContainer: {
-		display: "flex",
-		justifyContent: "space-between",
-		minHeight: 160,
-	},
+  cardContentContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    minHeight: 160,
+  },
 
-	cardContent: { padding: 2, flexGrow: 1 },
+  cardContent: { padding: 2, flexGrow: 1 },
 
-	postTitle: {
-		fontWeight: 600,
-		marginBottom: 0.5,
-		lineHeight: 1.3,
-	},
+  postTitle: {
+    fontWeight: 600,
+    marginBottom: 0.5,
+    lineHeight: 1.3,
+  },
 
-	postDescription: {
-		marginTop: 1,
-		display: "-webkit-box",
-		WebkitLineClamp: 3,
-		WebkitBoxOrient: "vertical",
-		overflow: "hidden",
-		textOverflow: "ellipsis",
-	},
+  postDescription: {
+    marginTop: 1,
+    display: '-webkit-box',
+    WebkitLineClamp: 3,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
 
-	media: {
-		width: 160,
-		height: 160,
-		padding: 1,
-		borderRadius: 3,
-		objectFit: "cover",
-	},
+  media: {
+    width: 160,
+    height: 160,
+    padding: 1,
+    borderRadius: 3,
+    objectFit: 'cover',
+  },
 
-	actions: {
-		paddingX: 2,
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "space-between",
-	},
+  actions: {
+    paddingX: 2,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
 
-	comments: { display: "flex", alignItems: "center", gap: 0.5 },
+  comments: { display: 'flex', alignItems: 'center', gap: 0.5 },
 
-	metadata: {
-		display: "flex",
-		alignItems: "center",
-		marginTop: 1,
-	},
+  metadata: {
+    display: 'flex',
+    alignItems: 'center',
+    marginTop: 1,
+  },
 
-	metadataText: {
-		marginRight: 2,
-	},
+  metadataText: {
+    marginRight: 2,
+  },
+
+  authorRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 1,
+    marginBottom: 1,
+  },
+  authorAvatar: {
+    width: 36,
+    height: 36,
+  },
+  authorName: {
+    fontWeight: 600,
+    fontSize: 14,
+  },
 };
 
 export default styles;
