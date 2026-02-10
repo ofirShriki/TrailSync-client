@@ -13,12 +13,15 @@ import { Logo } from "../../components/Icons";
 import { PATHS } from "../../constants/routes";
 import { authService, type LoginData } from "../../services/authService";
 import styles from "./Login.styles";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 
 const Login = () => {
 	const navigate = useNavigate();
 	const { login: authLogin, isAuthenticated } = useAuth();
+
+	const [isGoogleLoginError, setIsGoogleLoginError] = useState(false);
 
 	useEffect(() => {
 		if (isAuthenticated) {
@@ -68,6 +71,9 @@ const Login = () => {
 						{(error as any)?.response?.data?.message ||
 							"Login failed. Please check your credentials."}
 					</Alert>
+				)}
+				{isGoogleLoginError && (
+					<Alert severity="error">Login failed. Please try again</Alert>
 				)}
 
 				<Controller
@@ -127,6 +133,25 @@ const Login = () => {
 				>
 					{isPending ? <CircularProgress size={24} /> : "Log In"}
 				</Button>
+
+				<Box>
+					<GoogleLogin
+						
+						onSuccess={async (credentialsRes: CredentialResponse) => {
+							try {
+								const { tokens, userId } = await authService.googleLogin(
+									credentialsRes.credential ?? "",
+								);
+
+								authLogin(tokens.token, tokens.refreshToken, userId);
+
+								navigate(PATHS.HOME);
+							} catch (_err) {
+								setIsGoogleLoginError(true);
+							}
+						}}
+					/>
+				</Box>
 			</Box>
 
 			<Typography sx={styles.signUpText}>
