@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
 import { QUERY_KEYS } from "../../constants/queryKeys";
 import userService from "../../services/userService";
+import { getProfilePicturePath } from "../../utils/userUtils";
 
 const Navbar: React.FC = () => {
 	const { userId } = useAuth();
@@ -33,10 +34,7 @@ const Navbar: React.FC = () => {
 				icon={
 					<Avatar
 						alt="user name"
-						src={
-							user &&
-							`${import.meta.env.VITE_SERVER_URL}/${user.profilePicture}`
-						}
+						src={getProfilePicturePath(user?.profilePicture)}
 						sx={styles.avatar}
 					/>
 				}

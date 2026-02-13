@@ -25,10 +25,19 @@ export interface GetPostsFilters {
 	maxDays?: number;
 }
 
+export interface PaginatedPostsResponse {
+	data: Post[];
+	hasMore: boolean;
+}
+
 export const postService = {
-	async getAllPosts(filters?: GetPostsFilters): Promise<Post[]> {
-		const response = await axiosInstance.get<Post[]>("/post", {
-			params: filters,
+	async getAllPosts(
+		filters?: GetPostsFilters,
+		page?: number,
+		batchSize?: number,
+	): Promise<PaginatedPostsResponse> {
+		const response = await axiosInstance.get<PaginatedPostsResponse>("/post", {
+			params: page && batchSize ? { ...filters, page, batchSize } : filters,
 		});
 		return response.data;
 	},
