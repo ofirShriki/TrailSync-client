@@ -9,8 +9,6 @@ import { QUERY_KEYS } from "../../constants/queryKeys";
 import { postService } from "../../services/postService";
 import styles from "./Home.styles";
 
-const POSTS_PER_PAGE = 10;
-
 const Home: React.FC = () => {
 	const [isHovered, setIsHovered] = useState(false);
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -19,7 +17,11 @@ const Home: React.FC = () => {
 		useInfiniteQuery({
 			queryKey: [QUERY_KEYS.POSTS],
 			queryFn: async ({ pageParam = 1 }) =>
-				await postService.getAllPosts(undefined, pageParam, POSTS_PER_PAGE),
+				await postService.getAllPosts(
+					undefined,
+					pageParam,
+					Number(import.meta.env.VITE_BATCH_SIZE),
+				),
 			getNextPageParam: (lastPage, allPages) =>
 				lastPage.hasMore ? allPages.length + 1 : undefined,
 			initialPageParam: 1,
