@@ -45,6 +45,19 @@ const styles = {
 			},
 		},
 	},
+
+	googleButton: {
+		marginTop: 2,
+		display: "flex",
+		alignItems: "center",
+		gap: 2,
+		fontSize: 16,
+
+		"& img": {
+			width: 20,
+			height: 20,
+		},
+	},
 };
 
 export default styles;

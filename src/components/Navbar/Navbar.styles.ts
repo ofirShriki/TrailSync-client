@@ -38,6 +38,25 @@ const styles = {
 	}),
 
 	avatar: { width: 30, height: 30 },
+
+	logoutButton: {
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "flex-start",
+		gap: 1,
+		marginY: 0.5,
+		borderRadius: 1,
+		width: "100%",
+		boxSizing: "border-box",
+		padding: 1.5,
+		textTransform: "none",
+		color: "text.secondary",
+
+		"&:hover": {
+			backgroundColor: "rgba(211, 47, 47, 0.1)",
+			color: "error.main",
+		},
+	},
 };
 
 export default styles;

@@ -6,25 +6,45 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
+import { useGoogleLogin, type TokenResponse } from "@react-oauth/google";
 import { useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Logo } from "../../components/Icons";
 import { PATHS } from "../../constants/routes";
+import { useAuth } from "../../contexts/AuthContext";
 import { authService, type LoginData } from "../../services/authService";
 import styles from "./Login.styles";
-import { useEffect } from "react";
-import { useAuth } from "../../contexts/AuthContext";
+import googleIcon from "../../assets/googleIcon.svg";
 
 const Login = () => {
 	const navigate = useNavigate();
 	const { login: authLogin, isAuthenticated } = useAuth();
+
+	const [isGoogleLoginError, setIsGoogleLoginError] = useState(false);
 
 	useEffect(() => {
 		if (isAuthenticated) {
 			navigate(PATHS.HOME);
 		}
 	}, [isAuthenticated, navigate]);
+
+	const googleLogin = useGoogleLogin({
+		onSuccess: async (credentialsRes: TokenResponse) => {
+			try {
+				const { tokens, userId } = await authService.googleLogin(
+					credentialsRes.access_token ?? "",
+				);
+
+				authLogin(tokens.token, tokens.refreshToken, userId);
+
+				navigate(PATHS.HOME);
+			} catch (_err) {
+				setIsGoogleLoginError(true);
+			}
+		},
+	});
 
 	const {
 		control,
@@ -68,6 +88,9 @@ const Login = () => {
 						{(error as any)?.response?.data?.message ||
 							"Login failed. Please check your credentials."}
 					</Alert>
+				)}
+				{isGoogleLoginError && (
+					<Alert severity="error">Login failed. Please try again</Alert>
 				)}
 
 				<Controller
@@ -126,6 +149,17 @@ const Login = () => {
 					sx={styles.submitButton}
 				>
 					{isPending ? <CircularProgress size={24} /> : "Log In"}
+				</Button>
+
+				<Button
+					variant="outlined"
+					color="primary"
+					fullWidth
+					size="large"
+					onClick={() => googleLogin()}
+					sx={styles.googleButton}
+				>
+					<img src={googleIcon} alt="Google" /> Log In with Google
 				</Button>
 			</Box>
 
