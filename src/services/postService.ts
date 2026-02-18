@@ -35,7 +35,7 @@ export const postService = {
     filters?: GetPostsFilters;
     page?: number;
     batchSize?: number;
-  }): Promise<PaginatedPostsResponse> {
+  }): Promise<PaginatedPostsResponse | Post[]> {
     const { filters = {}, page, batchSize } = params;
     const response = await axiosInstance.get<PaginatedPostsResponse>("/post", {
       params: {
@@ -47,6 +47,7 @@ export const postService = {
           }),
       },
     });
+
     return response.data;
   },
 
@@ -56,6 +57,19 @@ export const postService = {
         "Content-Type": "multipart/form-data",
       },
     });
+    return response.data;
+  },
+
+  async updatePost(postId: string, formData: FormData): Promise<Post> {
+    const response = await axiosInstance.put<Post>(
+      `/post/${postId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     return response.data;
   },
 };

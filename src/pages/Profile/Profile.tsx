@@ -19,6 +19,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../../constants/queryKeys";
 import userService from "../../services/userService";
 import postService from "../../services/postService";
+import type { Post } from "../../types/post";
 
 const Profile: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -38,7 +39,9 @@ const Profile: React.FC = () => {
     queryKey: [QUERY_KEYS.POSTS_BY_USER, userId],
     enabled: !!userId,
     queryFn: async () =>
-      (await postService.getAllPosts({ filters: { sender: userId! } })).data,
+      (await postService.getAllPosts({
+        filters: { sender: userId! },
+      })) as Post[],
   });
 
   const handleRefetchProfile = () => {
@@ -48,6 +51,8 @@ const Profile: React.FC = () => {
     setImageLoading(true);
     setImageRefreshKey(Date.now().toString());
   };
+
+  console.log({ p: posts });
 
   return (
     user && (
