@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -10,18 +10,18 @@ import {
   CardMedia,
   CircularProgress,
   Alert,
-} from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
-import CloseIcon from "@mui/icons-material/Close";
-import style from "../CreatePostModal/CreatePostModal.styles.ts";
-import GenericModal from "../GenericModal/index.ts";
-import { useForm, Controller } from "react-hook-form";
-import { GoogleMaps } from "../Icons/index.ts";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import type { Post } from "../../types/post.ts";
-import { generatePhotosPreviews } from "../../utils/photoUtils";
-import { QUERY_KEYS } from "../../constants/queryKeys.ts";
+} from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import CloseIcon from '@mui/icons-material/Close';
+import style from '../CreatePostModal/CreatePostModal.styles.ts';
+import GenericModal from '../GenericModal/index.ts';
+import { useForm, Controller } from 'react-hook-form';
+import { GoogleMaps } from '../Icons/index.ts';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import type { Post } from '../../types/post.ts';
+import { generatePhotosPreviews } from '../../utils/photoUtils';
+import { QUERY_KEYS } from '../../constants/queryKeys.ts';
 
 export interface CreatePostFormData {
   title: string;
@@ -55,7 +55,8 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
   title,
   submitLabel,
 }) => {
-  const { data: photoPreviews = [] } = useQuery({
+  const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
+  const { data: formerPhotosPreview = [] } = useQuery({
     queryKey: [QUERY_KEYS.PHOTO_PREVIEWS, initialValues.photos],
     queryFn: () => generatePhotosPreviews(initialValues.photos ?? []),
     enabled:
@@ -69,22 +70,22 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
     reset,
     watch,
   } = useForm<CreatePostFormData>({
-    mode: "onChange",
+    mode: 'onChange',
     defaultValues: {
-      title: initialValues.title || "",
-      mapLink: initialValues.mapLink || "",
+      title: initialValues.title || '',
+      mapLink: initialValues.mapLink || '',
       price: initialValues.price ?? 0,
       numberOfDays: initialValues.numberOfDays ?? 0,
       location: {
-        country: initialValues.location?.country || "",
-        city: initialValues.location?.city || "",
+        country: initialValues.location?.country || '',
+        city: initialValues.location?.city || '',
       },
-      description: initialValues.description || "",
+      description: initialValues.description || '',
       photos: initialValues.photos || [],
     },
   });
 
-  const photoFiles = watch("photos") || [];
+  const photoFiles = watch('photos') || [];
 
   const {
     mutate: submitMutate,
@@ -101,6 +102,7 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
 
   const handleCloseModal = () => {
     reset();
+    setPhotoPreviews([]);
     setIsModalOpen(false);
   };
 
@@ -111,7 +113,24 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
     const files = event.target.files;
 
     if (files) {
-      onChange([...photoFiles, ...Array.from(files)]);
+      const newFiles = Array.from(files);
+      const newPreviews: string[] = [];
+
+      newFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          newPreviews.push(reader.result as string);
+
+          if (newPreviews.length === newFiles.length) {
+            setPhotoPreviews(prev => [...prev, ...newPreviews]);
+          }
+        };
+
+        reader.readAsDataURL(file);
+      });
+
+      const updatedFiles = [...photoFiles, ...newFiles];
+      onChange(updatedFiles);
     }
   };
 
@@ -120,26 +139,26 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
     onChange: (value: File[]) => void
   ) => {
     const updatedFiles = photoFiles.filter((_, i) => i !== index);
-
     onChange(updatedFiles);
+    setPhotoPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const onSubmitForm = (data: CreatePostFormData) => {
     const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("mapLink", data.mapLink);
-    formData.append("price", data.price.toString());
-    formData.append("numberOfDays", data.numberOfDays.toString());
-    formData.append("location[country]", data.location.country);
+    formData.append('title', data.title);
+    formData.append('mapLink', data.mapLink);
+    formData.append('price', data.price.toString());
+    formData.append('numberOfDays', data.numberOfDays.toString());
+    formData.append('location[country]', data.location.country);
 
     if (data.location.city) {
-      formData.append("location[city]", data.location.city);
+      formData.append('location[city]', data.location.city);
     }
 
-    formData.append("description", data.description);
+    formData.append('description', data.description);
 
     data.photos.forEach(file => {
-      formData.append("photos", file);
+      formData.append('photos', file);
     });
 
     submitMutate(formData);
@@ -161,7 +180,7 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
         <Controller
           name="title"
           control={control}
-          rules={{ required: "Title is required" }}
+          rules={{ required: 'Title is required' }}
           render={({ field }) => (
             <TextField
               {...field}
@@ -177,11 +196,11 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
           name="mapLink"
           control={control}
           rules={{
-            required: "Google Maps URL is required",
+            required: 'Google Maps URL is required',
             pattern: {
               value:
                 /^https?:\/\/(www\.)?(google\.com\/maps|maps\.google\.com|goo\.gl\/maps)/,
-              message: "Please enter a valid Google Maps URL",
+              message: 'Please enter a valid Google Maps URL',
             },
           }}
           render={({ field }) => (
@@ -209,7 +228,7 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
           <Controller
             name="location.country"
             control={control}
-            rules={{ required: "Country is required" }}
+            rules={{ required: 'Country is required' }}
             render={({ field }) => (
               <TextField
                 {...field}
@@ -240,8 +259,8 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
             name="price"
             control={control}
             rules={{
-              required: "Price is required",
-              min: { value: 0, message: "Invalid sum" },
+              required: 'Price is required',
+              min: { value: 0, message: 'Invalid sum' },
             }}
             render={({ field }) => (
               <TextField
@@ -267,8 +286,8 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
             name="numberOfDays"
             control={control}
             rules={{
-              required: "Number of days is required",
-              min: { value: 1, message: "Must be at least 1 day" },
+              required: 'Number of days is required',
+              min: { value: 1, message: 'Must be at least 1 day' },
             }}
             render={({ field }) => (
               <TextField
@@ -287,7 +306,7 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
         <Controller
           name="description"
           control={control}
-          rules={{ required: "Description is required" }}
+          rules={{ required: 'Description is required' }}
           render={({ field }) => (
             <TextField
               {...field}
@@ -306,7 +325,7 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
           control={control}
           rules={{
             validate: value =>
-              (value && value.length > 0) || "At least one photo is required",
+              (value && value.length > 0) || 'At least one photo is required',
           }}
           render={({ field: { onChange } }) => (
             <Box>
@@ -336,25 +355,27 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
                 </Typography>
               )}
 
-              {photoPreviews.length > 0 && (
+              {(photoPreviews.length > 0 || formerPhotosPreview.length > 0) && (
                 <Box sx={style.photoPreviewContainer}>
-                  {photoPreviews.map((preview, index) => (
-                    <Card key={index} sx={style.photoCard}>
-                      <CardMedia
-                        component="img"
-                        image={preview}
-                        alt={`Preview ${index + 1}`}
-                        sx={style.photoImage}
-                      />
-                      <IconButton
-                        size="small"
-                        onClick={() => handleRemovePhoto(index, onChange)}
-                        sx={style.photoRemoveButton}
-                      >
-                        <CloseIcon fontSize="small" />
-                      </IconButton>
-                    </Card>
-                  ))}
+                  {[...photoPreviews, ...formerPhotosPreview].map(
+                    (preview, index) => (
+                      <Card key={index} sx={style.photoCard}>
+                        <CardMedia
+                          component="img"
+                          image={preview}
+                          alt={`Preview ${index + 1}`}
+                          sx={style.photoImage}
+                        />
+                        <IconButton
+                          size="small"
+                          onClick={() => handleRemovePhoto(index, onChange)}
+                          sx={style.photoRemoveButton}
+                        >
+                          <CloseIcon fontSize="small" />
+                        </IconButton>
+                      </Card>
+                    )
+                  )}
                 </Box>
               )}
             </Box>
@@ -364,7 +385,7 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
         {isError && (
           <Alert severity="error">
             {(error as any)?.response?.data?.message ||
-              "Failed to submit post. Please try again."}
+              'Failed to submit post. Please try again.'}
           </Alert>
         )}
         <Button
