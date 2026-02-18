@@ -5,18 +5,18 @@ import {
   CircularProgress,
   TextField,
   Typography,
-} from "@mui/material";
-import { useGoogleLogin, type TokenResponse } from "@react-oauth/google";
-import { useMutation } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { Logo } from "../../components/Icons";
-import { PATHS } from "../../constants/routes";
-import { useAuth } from "../../contexts/AuthContext";
-import { authService, type LoginData } from "../../services/authService";
-import styles from "./Login.styles";
-import googleIcon from "../../assets/googleIcon.svg";
+} from '@mui/material';
+import { useGoogleLogin, type TokenResponse } from '@react-oauth/google';
+import { useMutation } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { Logo } from '../../components/Icons';
+import { PATHS } from '../../constants/routes';
+import { useAuth } from '../../contexts/AuthContext';
+import { authService, type LoginData } from '../../services/authService';
+import styles from './Login.styles';
+import googleIcon from '../../assets/googleIcon.svg';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -30,31 +30,31 @@ const Login = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  // const googleLogin = useGoogleLogin({
-  // 	onSuccess: async (credentialsRes: TokenResponse) => {
-  // 		try {
-  // 			const { tokens, userId } = await authService.googleLogin(
-  // 				credentialsRes.access_token ?? "",
-  // 			);
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (credentialsRes: TokenResponse) => {
+      try {
+        const { tokens, userId } = await authService.googleLogin(
+          credentialsRes.access_token ?? ''
+        );
 
-  // 			authLogin(tokens.token, tokens.refreshToken, userId);
+        authLogin(tokens.token, tokens.refreshToken, userId);
 
-  // 			navigate(PATHS.HOME);
-  // 		} catch (_err) {
-  // 			setIsGoogleLoginError(true);
-  // 		}
-  // 	},
-  // });
+        navigate(PATHS.HOME);
+      } catch (_err) {
+        setIsGoogleLoginError(true);
+      }
+    },
+  });
 
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginData>({
-    mode: "onChange",
+    mode: 'onChange',
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
@@ -86,21 +86,21 @@ const Login = () => {
         {isError && (
           <Alert severity="error">
             {(error as any)?.response?.data?.message ||
-              "Login failed. Please check your credentials."}
+              'Login failed. Please check your credentials.'}
           </Alert>
         )}
-        {/* {isGoogleLoginError && (
+        {isGoogleLoginError && (
           <Alert severity="error">Login failed. Please try again</Alert>
-        )} */}
+        )}
 
         <Controller
           name="email"
           control={control}
           rules={{
-            required: "Email is required",
+            required: 'Email is required',
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "Invalid email address",
+              message: 'Invalid email address',
             },
           }}
           render={({ field }) => (
@@ -120,10 +120,10 @@ const Login = () => {
           name="password"
           control={control}
           rules={{
-            required: "Password is required",
+            required: 'Password is required',
             minLength: {
               value: 6,
-              message: "Password must be at least 6 characters",
+              message: 'Password must be at least 6 characters',
             },
           }}
           render={({ field }) => (
@@ -148,10 +148,10 @@ const Login = () => {
           disabled={isPending}
           sx={styles.submitButton}
         >
-          {isPending ? <CircularProgress size={24} /> : "Log In"}
+          {isPending ? <CircularProgress size={24} /> : 'Log In'}
         </Button>
 
-        {/* <Button
+        <Button
           variant="outlined"
           color="primary"
           fullWidth
@@ -160,11 +160,11 @@ const Login = () => {
           sx={styles.googleButton}
         >
           <img src={googleIcon} alt="Google" /> Log In with Google
-        </Button> */}
+        </Button>
       </Box>
 
       <Typography sx={styles.signUpText}>
-        Don't have an account?{" "}
+        Don't have an account?{' '}
         <Button
           variant="text"
           color="primary"
