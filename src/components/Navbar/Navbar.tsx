@@ -2,8 +2,9 @@ import type React from "react";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import { Logo } from "../Icons";
-import { Home } from "@mui/icons-material";
+import { Home, Logout } from "@mui/icons-material";
 import NavbarItem from "./NavbarItem";
 import styles from "./Navbar.styles";
 import { useQuery } from "@tanstack/react-query";
@@ -13,7 +14,7 @@ import userService from "../../services/userService";
 import { getProfilePicturePath } from "../../utils/userUtils";
 
 const Navbar: React.FC = () => {
-	const { userId } = useAuth();
+	const { userId, logout } = useAuth();
 
 	const { data: user } = useQuery({
 		queryKey: [QUERY_KEYS.USER_BY_ID],
@@ -33,13 +34,24 @@ const Navbar: React.FC = () => {
 				route="/profile"
 				icon={
 					<Avatar
-						alt="user name"
+						alt={user?.username}
 						src={getProfilePicturePath(user?.profilePicture)}
 						sx={styles.avatar}
 					/>
 				}
 				label="Profile"
 			/>
+
+			<Box sx={{ marginTop: "auto" }}>
+				<Button
+					onClick={logout}
+					sx={styles.logoutButton}
+					startIcon={<Logout />}
+					fullWidth
+				>
+					Logout
+				</Button>
+			</Box>
 		</Box>
 	);
 };

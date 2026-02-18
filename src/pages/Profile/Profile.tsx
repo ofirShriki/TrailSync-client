@@ -63,7 +63,7 @@ const Profile: React.FC = () => {
               />
             )}
             <Avatar
-              src={`${import.meta.env.VITE_SERVER_URL}/${user?.profilePicture}${imageRefreshKey ? `?t=${imageRefreshKey}` : ""}`}
+              src={`${user?.profilePicture}${imageRefreshKey ? `?t=${imageRefreshKey}` : ""}`}
               alt={user?.username}
               sx={{ ...styles.avatar, display: imageLoading ? "none" : "flex" }}
               onLoad={() => setImageLoading(false)}

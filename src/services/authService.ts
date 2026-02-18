@@ -29,6 +29,18 @@ export const authService = {
 			"/auth/login",
 			data,
 		);
+
+		return response.data;
+	},
+
+	async googleLogin(credentials: string): Promise<LoginResponse> {
+		const response = await axiosInstance.post<LoginResponse>(
+			"/auth/google-login",
+			{
+				credentials,
+			},
+		);
+
 		return response.data;
 	},
 
@@ -37,6 +49,7 @@ export const authService = {
 			"/auth/register",
 			data,
 		);
+
 		return response.data;
 	},
 
@@ -59,6 +72,7 @@ export const authService = {
 				},
 			},
 		);
+
 		return response.data;
 	},
 
