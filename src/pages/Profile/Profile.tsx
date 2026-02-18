@@ -67,6 +67,7 @@ const Profile: React.FC = () => {
               alt={user?.username}
               sx={{ ...styles.avatar, display: imageLoading ? "none" : "flex" }}
               onLoad={() => setImageLoading(false)}
+              imgProps={{ referrerPolicy: "no-referrer" }}
             />
             <Box>
               <Box sx={styles.usernameContainer}>

@@ -1,11 +1,11 @@
-import type React from 'react';
-import { Box, Avatar, Typography } from '@mui/material';
-import styles from './Comment.styles';
-import type { Comment } from '../../types/comment';
-import { useQuery } from '@tanstack/react-query';
-import userService from '../../services/userService';
-import { QUERY_KEYS } from '../../constants/queryKeys';
-import { getProfilePicturePath } from '../../utils/userUtils';
+import type React from "react";
+import { Box, Avatar, Typography } from "@mui/material";
+import styles from "./Comment.styles";
+import type { Comment } from "../../types/comment";
+import { useQuery } from "@tanstack/react-query";
+import userService from "../../services/userService";
+import { QUERY_KEYS } from "../../constants/queryKeys";
+import { getProfilePicturePath } from "../../utils/userUtils";
 
 type CommentProps = {
   comment: Comment;
@@ -40,7 +40,10 @@ const CommentComponent: React.FC<CommentProps> = ({ comment }) => {
 
   return (
     <Box sx={styles.root}>
-      <Avatar src={getProfilePicturePath(commentWriter.profilePicture)} />
+      <Avatar
+        src={getProfilePicturePath(commentWriter.profilePicture)}
+        imgProps={{ referrerPolicy: "no-referrer" }}
+      />
       <Box sx={styles.body}>
         <Box sx={styles.header}>
           <Typography component="span" sx={styles.username}>

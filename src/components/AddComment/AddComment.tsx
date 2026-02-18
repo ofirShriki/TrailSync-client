@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
-import { Box, Avatar, TextField, IconButton } from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
-import styles from './AddComment.styles';
-import { useAuth } from '../../contexts/AuthContext';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { QUERY_KEYS } from '../../constants/queryKeys';
-import userService from '../../services/userService';
-import commetService, { type CreateCommentData } from '../../services/commentService';
-import type { Comment } from '../../types/comment';
-import { getProfilePicturePath } from '../../utils/userUtils';
+import React, { useState } from "react";
+import { Box, Avatar, TextField, IconButton } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
+import styles from "./AddComment.styles";
+import { useAuth } from "../../contexts/AuthContext";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "../../constants/queryKeys";
+import userService from "../../services/userService";
+import commetService, {
+  type CreateCommentData,
+} from "../../services/commentService";
+import type { Comment } from "../../types/comment";
+import { getProfilePicturePath } from "../../utils/userUtils";
 
 type Props = {
   postId: string;
@@ -18,17 +20,18 @@ type Props = {
 const AddComment: React.FC<Props> = ({ postId, onAddComment }) => {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
 
   const { data: currentUser } = useQuery({
     queryKey: [QUERY_KEYS.USER_BY_ID, userId],
-    queryFn: () => (userId ? userService.getUserById(userId) : Promise.reject('No user ID')),
+    queryFn: () =>
+      userId ? userService.getUserById(userId) : Promise.reject("No user ID"),
     enabled: !!userId,
   });
 
   const { mutate: createComment, isPending: isLoading } = useMutation({
     mutationFn: (data: CreateCommentData) => commetService.createComment(data),
-    onSuccess: (newComment) => {
+    onSuccess: newComment => {
       onAddComment?.(newComment);
 
       queryClient.invalidateQueries({
@@ -50,12 +53,12 @@ const AddComment: React.FC<Props> = ({ postId, onAddComment }) => {
     if (trimmedText) {
       createComment({ post: postId, text: trimmedText });
 
-      setText('');
+      setText("");
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
@@ -63,7 +66,10 @@ const AddComment: React.FC<Props> = ({ postId, onAddComment }) => {
 
   return (
     <Box sx={styles.root}>
-      <Avatar src={getProfilePicturePath(currentUser.profilePicture)} />
+      <Avatar
+        src={getProfilePicturePath(currentUser.profilePicture)}
+        imgProps={{ referrerPolicy: "no-referrer" }}
+      />
       <TextField
         fullWidth
         multiline
@@ -71,7 +77,7 @@ const AddComment: React.FC<Props> = ({ postId, onAddComment }) => {
         maxRows={10}
         placeholder="Write a comment..."
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={e => setText(e.target.value)}
         onKeyPress={handleKeyPress}
         variant="outlined"
         size="small"

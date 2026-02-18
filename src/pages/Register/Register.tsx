@@ -1,21 +1,31 @@
-import { Alert, Box, Button, CircularProgress, TextField, Typography, Avatar } from '@mui/material';
-import { useMutation } from '@tanstack/react-query';
-import { Controller, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { authService, type RegisterData } from '../../services/authService';
-import styles from './Register.styles';
-import { useEffect, useState, type ChangeEvent } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  TextField,
+  Typography,
+  Avatar,
+} from "@mui/material";
+import { useMutation } from "@tanstack/react-query";
+import { Controller, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { authService, type RegisterData } from "../../services/authService";
+import styles from "./Register.styles";
+import { useEffect, useState, type ChangeEvent } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
 const Register = () => {
   const navigate = useNavigate();
   const { login: authLogin, isAuthenticated } = useAuth();
-  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/home');
+      navigate("/home");
     }
   }, [isAuthenticated, navigate]);
 
@@ -25,12 +35,12 @@ const Register = () => {
     formState: { errors },
     setValue,
   } = useForm<RegisterData>({
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
-      email: '',
-      password: '',
-      username: '',
-      profilePicture: '',
+      email: "",
+      password: "",
+      username: "",
+      profilePicture: "",
     },
   });
 
@@ -43,7 +53,7 @@ const Register = () => {
     mutationFn: (data: RegisterData) => authService.registerWithFile(data),
     onSuccess: ({ tokens: { token, refreshToken }, userId }) => {
       authLogin(token, refreshToken, userId);
-      navigate('/home');
+      navigate("/home");
     },
   });
 
@@ -51,7 +61,7 @@ const Register = () => {
     const file = event.target.files?.[0];
 
     if (file) {
-      setValue('profilePicture', file);
+      setValue("profilePicture", file);
 
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -75,25 +85,43 @@ const Register = () => {
           name="profilePicture"
           control={control}
           rules={{
-            required: 'Profile picture is required',
+            required: "Profile picture is required",
           }}
           render={() => (
             <>
-              <Button component="label" sx={styles.avatarButton} disabled={isPending}>
+              <Button
+                component="label"
+                sx={styles.avatarButton}
+                disabled={isPending}
+              >
                 <Avatar
                   src={profileImagePreview || undefined}
                   sx={styles.avatar(!!errors.profilePicture)}
+                  imgProps={{ referrerPolicy: "no-referrer" }}
                 >
                   <AddPhotoAlternateIcon sx={styles.avatarIcon} />
                 </Avatar>
-                <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
               </Button>
               {errors.profilePicture && (
-                <Typography color="error" variant="caption" sx={styles.errorText}>
+                <Typography
+                  color="error"
+                  variant="caption"
+                  sx={styles.errorText}
+                >
                   {errors.profilePicture.message}
                 </Typography>
               )}
-              <Typography variant="caption" color="text.secondary" sx={styles.helperText}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={styles.helperText}
+              >
                 Click to upload profile picture
               </Typography>
             </>
@@ -104,7 +132,8 @@ const Register = () => {
       <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={styles.form}>
         {isError && (
           <Alert severity="error">
-            {(error as any)?.response?.data?.message || 'Sign up failed. Please try again.'}
+            {(error as any)?.response?.data?.message ||
+              "Sign up failed. Please try again."}
           </Alert>
         )}
 
@@ -112,10 +141,10 @@ const Register = () => {
           name="username"
           control={control}
           rules={{
-            required: 'Username is required',
+            required: "Username is required",
             minLength: {
               value: 3,
-              message: 'Username must be at least 3 characters',
+              message: "Username must be at least 3 characters",
             },
           }}
           render={({ field }) => (
@@ -134,10 +163,10 @@ const Register = () => {
           name="email"
           control={control}
           rules={{
-            required: 'Email is required',
+            required: "Email is required",
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: 'Invalid email address',
+              message: "Invalid email address",
             },
           }}
           render={({ field }) => (
@@ -157,10 +186,10 @@ const Register = () => {
           name="password"
           control={control}
           rules={{
-            required: 'Password is required',
+            required: "Password is required",
             minLength: {
               value: 6,
-              message: 'Password must be at least 6 characters',
+              message: "Password must be at least 6 characters",
             },
           }}
           render={({ field }) => (
@@ -185,12 +214,12 @@ const Register = () => {
           disabled={isPending}
           sx={styles.submitButton}
         >
-          {isPending ? <CircularProgress size={24} /> : 'Sign Up'}
+          {isPending ? <CircularProgress size={24} /> : "Sign Up"}
         </Button>
 
         <Typography sx={styles.loginText}>
           Already have an account?
-          <Button onClick={() => navigate('/')} variant="text">
+          <Button onClick={() => navigate("/")} variant="text">
             Log In
           </Button>
         </Typography>
