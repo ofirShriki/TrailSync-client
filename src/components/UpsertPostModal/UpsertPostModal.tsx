@@ -14,7 +14,7 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import CloseIcon from "@mui/icons-material/Close";
-import style from "./CreatePostModal.styles.ts";
+import style from "../CreatePostModal/CreatePostModal.styles.ts";
 import GenericModal from "../GenericModal/index.ts";
 import { useForm, Controller } from "react-hook-form";
 import { GoogleMaps } from "../Icons/index.ts";

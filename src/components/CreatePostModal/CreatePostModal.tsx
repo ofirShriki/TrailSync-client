@@ -1,9 +1,9 @@
 import React from "react";
-import UpsertPostModal from "./UpsertPostModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { postService } from "../../services/postService";
 import { QUERY_KEYS } from "../../constants/queryKeys";
 import { useAuth } from "../../contexts/AuthContext.jsx";
+import UpsertPostModal from "../UpsertPostModal";
 
 interface CreatePostModalProps {
   isModalOpen: boolean;
