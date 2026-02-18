@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Typography,
@@ -18,8 +18,10 @@ import style from "../CreatePostModal/CreatePostModal.styles.ts";
 import GenericModal from "../GenericModal/index.ts";
 import { useForm, Controller } from "react-hook-form";
 import { GoogleMaps } from "../Icons/index.ts";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type { Post } from "../../types/post.ts";
+import { generatePhotosPreviews } from "../../utils/photoUtils";
+import { QUERY_KEYS } from "../../constants/queryKeys.ts";
 
 export interface CreatePostFormData {
   title: string;
@@ -53,7 +55,12 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
   title,
   submitLabel,
 }) => {
-  const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
+  const { data: photoPreviews = [] } = useQuery({
+    queryKey: [QUERY_KEYS.PHOTO_PREVIEWS, initialValues.photos],
+    queryFn: () => generatePhotosPreviews(initialValues.photos ?? []),
+    enabled:
+      isModalOpen && !!initialValues.photos && initialValues.photos.length > 0,
+  });
 
   const {
     control,
@@ -94,7 +101,6 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
 
   const handleCloseModal = () => {
     reset();
-    setPhotoPreviews([]);
     setIsModalOpen(false);
   };
 
@@ -105,24 +111,7 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
     const files = event.target.files;
 
     if (files) {
-      const newFiles = Array.from(files);
-      const newPreviews: string[] = [];
-
-      newFiles.forEach(file => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          newPreviews.push(reader.result as string);
-
-          if (newPreviews.length === newFiles.length) {
-            setPhotoPreviews(prev => [...prev, ...newPreviews]);
-          }
-        };
-
-        reader.readAsDataURL(file);
-      });
-
-      const updatedFiles = [...photoFiles, ...newFiles];
-      onChange(updatedFiles);
+      onChange([...photoFiles, ...Array.from(files)]);
     }
   };
 
@@ -131,8 +120,8 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
     onChange: (value: File[]) => void
   ) => {
     const updatedFiles = photoFiles.filter((_, i) => i !== index);
+
     onChange(updatedFiles);
-    setPhotoPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const onSubmitForm = (data: CreatePostFormData) => {

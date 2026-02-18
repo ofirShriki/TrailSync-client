@@ -1,8 +1,9 @@
-import type React from 'react';
-import PostMetadata from './PostMetadata';
-import type { Post } from '../../types/post';
-import { GoogleMaps } from '../Icons/';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import type React from "react";
+import PostMetadata from "./PostMetadata";
+import type { Post } from "../../types/post";
+import { GoogleMaps } from "../Icons/";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   Card,
   CardMedia,
@@ -13,12 +14,14 @@ import {
   Divider,
   IconButton,
   Avatar,
-} from '@mui/material';
-import styles from './PostCard.styles';
-import { useState } from 'react';
-import CommentList from '../CommentList';
-import AddComment from '../AddComment';
-import { getProfilePicturePath } from '../../utils/userUtils';
+} from "@mui/material";
+import styles from "./PostCard.styles";
+import { useState } from "react";
+import CommentList from "../CommentList";
+import AddComment from "../AddComment";
+import { getProfilePicturePath } from "../../utils/userUtils";
+import { useAuth } from "../../contexts/AuthContext";
+import UpdatePostModal from "../UpdatePostModal";
 
 interface PostProperties {
   post: Post;
@@ -26,12 +29,16 @@ interface PostProperties {
 }
 
 const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
+  const { userId } = useAuth();
   const firstPhoto = post.photos[0];
   const [showComments, setShowComments] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+
+  const isPostCurrUserPost = userId === post.sender?.id;
 
   return (
-    <Card onClick={onCardClick} sx={styles.root}>
-      <Box sx={styles.cardContentContainer}>
+    <Card sx={styles.root}>
+      <Box onClick={onCardClick} sx={styles.cardContentContainer}>
         <CardContent sx={styles.cardContent}>
           <Box sx={styles.authorRow}>
             <Avatar
@@ -40,7 +47,7 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
             />
             <Box>
               <Typography variant="subtitle2" sx={styles.authorName}>
-                {post.sender?.username ?? 'Unknown'}
+                {post.sender?.username ?? "Unknown"}
               </Typography>
             </Box>
           </Box>
@@ -70,13 +77,13 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
 
       <Divider />
 
-      <CardActions sx={styles.actions}>
-        <Box sx={styles.comments}>
+      <CardActions sx={styles.actions} onClick={e => e.stopPropagation()}>
+        <Box sx={styles.leftActions}>
           <IconButton
             size="small"
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation();
-              setShowComments((s) => !s);
+              setShowComments(s => !s);
             }}
           >
             <ChatBubbleOutlineIcon fontSize="small" color="primary" />
@@ -84,12 +91,25 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
           <Typography variant="body2" color="text.secondary">
             {post.comments?.length}
           </Typography>
+
+          {isPostCurrUserPost && (
+            <IconButton
+              size="small"
+              onClick={e => {
+                e.stopPropagation();
+                setIsUpdateModalOpen(true);
+              }}
+              title="Edit post"
+            >
+              <EditIcon fontSize="small" color="primary" />
+            </IconButton>
+          )}
         </Box>
 
         <IconButton
           component="a"
           href={post.mapLink}
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
           size="small"
         >
           <Box component={GoogleMaps} />
@@ -97,10 +117,18 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
       </CardActions>
 
       {showComments && (
-        <Box sx={{ padding: 2 }} onClick={(e) => e.stopPropagation()}>
+        <Box sx={{ padding: 2 }} onClick={e => e.stopPropagation()}>
           {post.comments && <CommentList comments={post.comments} />}
           <AddComment postId={post.id} />
         </Box>
+      )}
+
+      {isUpdateModalOpen && (
+        <UpdatePostModal
+          isModalOpen={isUpdateModalOpen}
+          setIsModalOpen={setIsUpdateModalOpen}
+          post={post}
+        />
       )}
     </Card>
   );
