@@ -1,5 +1,5 @@
-import axiosInstance from "./axiosInstance";
-import type { Post } from "../types/post";
+import axiosInstance from './axiosInstance';
+import type { Post } from '../types/post';
 
 export interface CreatePostData {
   title: string;
@@ -37,7 +37,7 @@ export const postService = {
     batchSize?: number;
   }): Promise<PaginatedPostsResponse | Post[]> {
     const { filters = {}, page, batchSize } = params;
-    const response = await axiosInstance.get<PaginatedPostsResponse>("/post", {
+    const response = await axiosInstance.get<PaginatedPostsResponse>('/post', {
       params: {
         ...filters,
         ...(page &&
@@ -52,9 +52,9 @@ export const postService = {
   },
 
   async createPost(formData: FormData): Promise<Post> {
-    const response = await axiosInstance.post<Post>("/post", formData, {
+    const response = await axiosInstance.post<Post>('/post', formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data',
       },
     });
     return response.data;
@@ -66,7 +66,7 @@ export const postService = {
       formData,
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       }
     );

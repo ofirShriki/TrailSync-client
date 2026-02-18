@@ -1,12 +1,12 @@
-import React from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { postService } from "../../services/postService";
-import { QUERY_KEYS } from "../../constants/queryKeys";
-import { useAuth } from "../../contexts/AuthContext.jsx";
-import UpsertPostModal from "../UpsertPostModal";
-import type { Post } from "../../types/post.js";
-import type { CreatePostFormData } from "../UpsertPostModal/UpsertPostModal";
-import { urlsToFiles } from "../../utils/photoUtils";
+import React, { useEffect, useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { postService } from '../../services/postService';
+import { QUERY_KEYS } from '../../constants/queryKeys';
+import { useAuth } from '../../contexts/AuthContext.jsx';
+import UpsertPostModal from '../UpsertPostModal';
+import type { Post } from '../../types/post.js';
+import type { UpsertPostFormData } from '../UpsertPostModal/UpsertPostModal';
+import { urlsToFiles } from '../../utils/photoUtils';
 
 interface CreatePostModalProps {
   isModalOpen: boolean;
@@ -21,11 +21,17 @@ const UpdatePostModal: React.FC<CreatePostModalProps> = ({
 }) => {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
-  const { data: photoFiles = [] } = useQuery({
-    queryKey: [QUERY_KEYS.POST_PHOTOS, post.id],
-    queryFn: () => urlsToFiles(post.photos),
-    enabled: isModalOpen && post.photos.length > 0,
-  });
+  const [photoFiles, setPhotoFiles] = React.useState<File[]>([]);
+
+  const getFilesFromUrls = async (urls: string[]) => {
+    const files = await urlsToFiles(urls);
+
+    setPhotoFiles(files);
+  };
+
+  useEffect(() => {
+    getFilesFromUrls(post.photos);
+  }, [post.photos]);
 
   const updatePost = async (formData: FormData) =>
     postService.updatePost(post.id, formData);
@@ -37,18 +43,31 @@ const UpdatePostModal: React.FC<CreatePostModalProps> = ({
     });
   };
 
-  const initialValues: Partial<CreatePostFormData> = {
-    title: post.title,
-    mapLink: post.mapLink,
-    price: post.price,
-    numberOfDays: post.numberOfDays,
-    location: {
-      country: post.location.country,
-      city: post.location.city,
-    },
-    description: post.description,
-    photos: photoFiles.length > 0 ? photoFiles : [],
-  };
+  const initialValues: Partial<UpsertPostFormData> = useMemo(() => {
+    return {
+      title: post.title,
+      mapLink: post.mapLink,
+      price: post.price,
+      numberOfDays: post.numberOfDays,
+      location: {
+        country: post.location.country,
+        city: post.location.city,
+      },
+      description: post.description,
+      photos: photoFiles.length > 0 ? photoFiles : [],
+      photosToDelete: post.photos,
+    };
+  }, [
+    photoFiles,
+    post.description,
+    post.location.city,
+    post.location.country,
+    post.mapLink,
+    post.numberOfDays,
+    post.photos,
+    post.price,
+    post.title,
+  ]);
 
   return (
     <UpsertPostModal

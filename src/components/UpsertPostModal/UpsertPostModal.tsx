@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -18,12 +18,11 @@ import style from '../CreatePostModal/CreatePostModal.styles.ts';
 import GenericModal from '../GenericModal/index.ts';
 import { useForm, Controller } from 'react-hook-form';
 import { GoogleMaps } from '../Icons/index.ts';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import type { Post } from '../../types/post.ts';
 import { generatePhotosPreviews } from '../../utils/photoUtils';
-import { QUERY_KEYS } from '../../constants/queryKeys.ts';
 
-export interface CreatePostFormData {
+export interface UpsertPostFormData {
   title: string;
   mapLink: string;
   price: number;
@@ -34,6 +33,7 @@ export interface CreatePostFormData {
   };
   description: string;
   photos: File[];
+  photosToDelete?: string[];
 }
 
 interface UpsertPostModalProps {
@@ -43,7 +43,7 @@ interface UpsertPostModalProps {
   title?: string;
   submitLabel?: string;
   onSuccess?: () => void;
-  initialValues?: Partial<CreatePostFormData>;
+  initialValues?: Partial<UpsertPostFormData>;
 }
 
 const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
@@ -56,12 +56,6 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
   submitLabel,
 }) => {
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
-  const { data: formerPhotosPreview = [] } = useQuery({
-    queryKey: [QUERY_KEYS.PHOTO_PREVIEWS, initialValues.photos],
-    queryFn: () => generatePhotosPreviews(initialValues.photos ?? []),
-    enabled:
-      isModalOpen && !!initialValues.photos && initialValues.photos.length > 0,
-  });
 
   const {
     control,
@@ -69,7 +63,8 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
     formState: { errors },
     reset,
     watch,
-  } = useForm<CreatePostFormData>({
+    setValue,
+  } = useForm<UpsertPostFormData>({
     mode: 'onChange',
     defaultValues: {
       title: initialValues.title || '',
@@ -82,10 +77,26 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
       },
       description: initialValues.description || '',
       photos: initialValues.photos || [],
+      photosToDelete: initialValues.photosToDelete || [],
     },
   });
 
-  const photoFiles = watch('photos') || [];
+  const photoFiles = watch('photos');
+
+  const getFormerPhotoPreviews = async () => {
+    const previews = await generatePhotosPreviews(initialValues.photos ?? []);
+    setPhotoPreviews(previews);
+  };
+
+  useEffect(() => {
+    getFormerPhotoPreviews();
+    setValue(
+      'photos',
+      initialValues.photos && initialValues.photos.length > 0
+        ? initialValues.photos
+        : []
+    );
+  }, [initialValues.photos, initialValues.photosToDelete]);
 
   const {
     mutate: submitMutate,
@@ -143,7 +154,7 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
     setPhotoPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-  const onSubmitForm = (data: CreatePostFormData) => {
+  const onSubmitForm = (data: UpsertPostFormData) => {
     const formData = new FormData();
     formData.append('title', data.title);
     formData.append('mapLink', data.mapLink);
@@ -156,6 +167,10 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
     }
 
     formData.append('description', data.description);
+
+    data.photosToDelete?.forEach(photo => {
+      formData.append('photosToDelete', photo);
+    });
 
     data.photos.forEach(file => {
       formData.append('photos', file);
@@ -355,27 +370,25 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
                 </Typography>
               )}
 
-              {(photoPreviews.length > 0 || formerPhotosPreview.length > 0) && (
+              {photoPreviews.length > 0 && (
                 <Box sx={style.photoPreviewContainer}>
-                  {[...photoPreviews, ...formerPhotosPreview].map(
-                    (preview, index) => (
-                      <Card key={index} sx={style.photoCard}>
-                        <CardMedia
-                          component="img"
-                          image={preview}
-                          alt={`Preview ${index + 1}`}
-                          sx={style.photoImage}
-                        />
-                        <IconButton
-                          size="small"
-                          onClick={() => handleRemovePhoto(index, onChange)}
-                          sx={style.photoRemoveButton}
-                        >
-                          <CloseIcon fontSize="small" />
-                        </IconButton>
-                      </Card>
-                    )
-                  )}
+                  {photoPreviews.map((preview, index) => (
+                    <Card key={index} sx={style.photoCard}>
+                      <CardMedia
+                        component="img"
+                        image={preview}
+                        alt={`Preview ${index + 1}`}
+                        sx={style.photoImage}
+                      />
+                      <IconButton
+                        size="small"
+                        onClick={() => handleRemovePhoto(index, onChange)}
+                        sx={style.photoRemoveButton}
+                      >
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    </Card>
+                  ))}
                 </Box>
               )}
             </Box>

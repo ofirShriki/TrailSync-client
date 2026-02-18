@@ -10,12 +10,12 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 
 createRoot(document.getElementById("root")!).render(
-	<GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ""}>
-		<StrictMode>
-			<ThemeProvider theme={theme}>
-				<CssBaseline />
-				<App />
-			</ThemeProvider>
-		</StrictMode>
-	</GoogleOAuthProvider>,
+  // <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ""}>
+  <StrictMode>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <App />
+    </ThemeProvider>
+  </StrictMode>
+  // </GoogleOAuthProvider>,
 );
