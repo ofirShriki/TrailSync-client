@@ -18,9 +18,9 @@ export interface UpdatePostData extends Partial<CreatePostData> {}
 
 export interface GetPostsFilters {
   sender?: string;
-  location?: string;
-  minPrice?: number;
+  country?: string;
   maxPrice?: number;
+  city?: string;
   minDays?: number;
   maxDays?: number;
 }

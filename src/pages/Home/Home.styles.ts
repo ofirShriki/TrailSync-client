@@ -1,23 +1,28 @@
 const styles = {
-	root: {
-		position: "relative",
-		marginBottom: 10,
-	},
+  root: {
+    position: "relative",
+    marginBottom: 10,
+  },
 
-	createButton: {
-		display: "flex",
-		gap: 1,
-		position: "fixed",
-		bottom: 32,
-		right: 32,
-		zIndex: 1000,
-		transition: "width 0.3s ease, padding 0.3s ease",
+  filtersContainer: {
+    padding: 3,
+    paddingBottom: 0,
+  },
 
-		"&:hover": {
-			paddingRight: 2,
-			backgroundColor: "primary.main",
-		},
-	},
+  createButton: {
+    display: "flex",
+    gap: 1,
+    position: "fixed",
+    bottom: 32,
+    right: 32,
+    zIndex: 1000,
+    transition: "width 0.3s ease, padding 0.3s ease",
+
+    "&:hover": {
+      paddingRight: 2,
+      backgroundColor: "primary.main",
+    },
+  },
 };
 
 export default styles;
