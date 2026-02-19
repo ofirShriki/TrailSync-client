@@ -7,6 +7,7 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
+import { pickBy, identity } from "lodash";
 import { GetCountries } from "react-country-state-city";
 import "react-country-state-city/dist/react-country-state-city.css";
 import styles from "./FiltersBar.styles";
@@ -44,32 +45,16 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
     city: undefined,
   });
 
-  // Fetch countries on mount
   useEffect(() => {
-    GetCountries().then((result: Country[]) => {
-      setCountries(result);
-    });
+    const fetchCountries = async () => {
+      setCountries(await GetCountries());
+    };
+
+    fetchCountries();
   }, []);
 
   const handleApply = () => {
-    const activeFilters: FiltersState = {};
-
-    if (filters.minDays !== undefined && filters.minDays > 0) {
-      activeFilters.minDays = filters.minDays;
-    }
-    if (filters.maxDays !== undefined && filters.maxDays > 0) {
-      activeFilters.maxDays = filters.maxDays;
-    }
-    if (filters.maxPrice !== undefined && filters.maxPrice > 0) {
-      activeFilters.maxPrice = filters.maxPrice;
-    }
-    if (filters.country) {
-      activeFilters.country = filters.country;
-    }
-    if (filters.city) {
-      activeFilters.city = filters.city;
-    }
-
+    const activeFilters = pickBy(filters, identity) as FiltersState;
     onApplyFilters(activeFilters);
   };
 
@@ -160,7 +145,7 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
           label="City"
           size="small"
           value={filters.city ?? ""}
-          onChange={(e) =>
+          onChange={e =>
             setFilters(prev => ({
               ...prev,
               city: e.target.value || undefined,

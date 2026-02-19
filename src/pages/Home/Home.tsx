@@ -1,6 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import { Box, Fab, Typography } from "@mui/material";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { pickBy, identity } from "lodash";
 import type React from "react";
 import { useMemo, useState } from "react";
 import CreatePostModal from "../../components/CreatePostModal";
@@ -19,13 +20,8 @@ const Home: React.FC = () => {
     useInfiniteQuery({
       queryKey: [QUERY_KEYS.POSTS, appliedFilters],
       queryFn: async ({ pageParam = 1 }) => {
-        const filters: any = {};
+        const filters = pickBy(appliedFilters, identity);
 
-        if (appliedFilters.minDays) filters.minDays = appliedFilters.minDays;
-        if (appliedFilters.maxDays) filters.maxDays = appliedFilters.maxDays;
-        if (appliedFilters.maxPrice) filters.maxPrice = appliedFilters.maxPrice;
-        if (appliedFilters.country) filters.country = appliedFilters.country;
-        if (appliedFilters.city) filters.city = appliedFilters.city;
         return await postService.getAllPosts({
           filters,
           page: pageParam,
@@ -48,20 +44,12 @@ const Home: React.FC = () => {
     setIsCreateModalOpen(true);
   };
 
-  const handleApplyFilters = (filters: FiltersState) => {
-    setAppliedFilters(filters);
-  };
-
-  const handleClearFilters = () => {
-    setAppliedFilters({});
-  };
-
   return (
     <Box sx={styles.root}>
       <Box sx={styles.filtersContainer}>
         <FiltersBar
-          onApplyFilters={handleApplyFilters}
-          onClearFilters={handleClearFilters}
+          onApplyFilters={filters => setAppliedFilters(filters)}
+          onClearFilters={() => setAppliedFilters({})}
         />
       </Box>
 
