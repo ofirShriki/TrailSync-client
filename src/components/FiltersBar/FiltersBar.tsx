@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   TextField,
@@ -7,6 +7,8 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
+import { GetCountries } from "react-country-state-city";
+import "react-country-state-city/dist/react-country-state-city.css";
 import styles from "./FiltersBar.styles";
 
 interface FiltersBarProps {
@@ -22,40 +24,18 @@ export interface FiltersState {
   city?: string;
 }
 
-// Popular countries list - you can expand this or use a countries API
-const COUNTRIES = [
-  "United States",
-  "Canada",
-  "United Kingdom",
-  "France",
-  "Germany",
-  "Italy",
-  "Spain",
-  "Australia",
-  "New Zealand",
-  "Japan",
-  "Switzerland",
-  "Norway",
-  "Sweden",
-  "Iceland",
-  "Nepal",
-  "Peru",
-  "Chile",
-  "Argentina",
-  "South Africa",
-  "Thailand",
-  "Indonesia",
-  "Vietnam",
-  "Morocco",
-  "Egypt",
-  "Kenya",
-  "Tanzania",
-];
+interface Country {
+  id: number;
+  name: string;
+  iso2: string;
+}
 
 const FiltersBar: React.FC<FiltersBarProps> = ({
   onApplyFilters,
   onClearFilters,
 }) => {
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [filters, setFilters] = useState<FiltersState>({
     minDays: undefined,
     maxDays: undefined,
@@ -63,6 +43,13 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
     country: undefined,
     city: undefined,
   });
+
+  // Fetch countries on mount
+  useEffect(() => {
+    GetCountries().then((result: Country[]) => {
+      setCountries(result);
+    });
+  }, []);
 
   const handleApply = () => {
     const activeFilters: FiltersState = {};
@@ -94,6 +81,7 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
       country: undefined,
       city: undefined,
     });
+    setSelectedCountry(null);
     onClearFilters();
   };
 
@@ -152,15 +140,17 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
           sx={styles.inputField}
         />
         <Autocomplete
-          options={COUNTRIES}
-          value={filters.country || null}
-          onChange={(_, newValue) =>
+          options={countries}
+          value={selectedCountry}
+          getOptionLabel={(option: Country) => option.name}
+          onChange={(_, newValue) => {
+            setSelectedCountry(newValue);
             setFilters(prev => ({
               ...prev,
-              country: newValue || undefined,
+              country: newValue?.name || undefined,
               city: undefined,
-            }))
-          }
+            }));
+          }}
           renderInput={params => (
             <TextField {...params} label="Country" size="small" />
           )}
@@ -170,14 +160,14 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
           label="City"
           size="small"
           value={filters.city ?? ""}
-          onChange={e =>
+          onChange={(e) =>
             setFilters(prev => ({
               ...prev,
               city: e.target.value || undefined,
             }))
           }
-          disabled={!filters.country}
-          placeholder={!filters.country ? "Select country first" : ""}
+          disabled={!selectedCountry}
+          placeholder={!selectedCountry ? "Select country first" : ""}
           sx={styles.inputField}
         />
         <Button
