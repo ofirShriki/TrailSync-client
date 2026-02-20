@@ -24,8 +24,6 @@ const PostList: React.FC<PostListProps> = ({
   const observerTarget = useRef<HTMLDivElement>(null);
 
   const handleCardClick = (post: Post) => {
-    console.log({ post });
-
     setSelectedPost(post);
   };
 

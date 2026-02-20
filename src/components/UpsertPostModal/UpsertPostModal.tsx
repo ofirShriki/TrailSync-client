@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Box,
   Typography,
@@ -13,7 +13,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import style from '../CreatePostModal/CreatePostModal.styles.ts';
 import GenericModal from '../GenericModal/index.ts';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { GoogleMaps } from '../Icons/index.ts';
 import { useMutation } from '@tanstack/react-query';
 import type { Post } from '../../types/post.ts';
@@ -46,7 +46,6 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
     handleSubmit,
     formState: { errors },
     reset,
-    watch,
     setValue,
     getValues,
   } = useForm<UpsertPostFormData>({
@@ -56,7 +55,15 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
     },
   });
 
-  const photoFiles = watch('photos');
+  const photoFiles = useWatch({
+    control,
+    name: 'photos',
+  });
+
+  const memoizedInitialPhotos = useMemo(
+    () => initialValues.photos || [],
+    [initialValues.photos]
+  );
 
   const {
     handlePhotoUpload,
@@ -66,7 +73,7 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
   } = usePhotoManager({
     getValues,
     setValue,
-    initialPhotos: initialValues.photos,
+    initialPhotos: memoizedInitialPhotos,
     photoFiles,
   });
 

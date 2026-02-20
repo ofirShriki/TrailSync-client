@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { postService } from '../../services/postService';
 import { QUERY_KEYS } from '../../constants/queryKeys';
-import { useAuth } from '../../contexts/AuthContext.jsx';
+import { useAuth } from '../../contexts/AuthContext';
 import UpsertPostModal from '../UpsertPostModal';
 import type { Post } from '../../types/post.js';
 import { urlsToFiles } from '../../utils/photoUtils';
