@@ -48,10 +48,6 @@ const DeletePostButton: React.FC<DeletePostButtonProps> = ({
     setOpenDialog(false);
   };
 
-  const handleConfirmDelete = () => {
-    deletePost();
-  };
-
   return (
     <>
       <IconButton size="small" onClick={handleOpenDialog} disabled={isPending}>
@@ -62,12 +58,7 @@ const DeletePostButton: React.FC<DeletePostButtonProps> = ({
         )}
       </IconButton>
 
-      <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        aria-labelledby="delete-dialog-title"
-        aria-describedby="delete-dialog-description"
-      >
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle id="delete-dialog-title">Delete Post?</DialogTitle>
         <DialogContent>
           <DialogContentText id="delete-dialog-description">
@@ -80,7 +71,9 @@ const DeletePostButton: React.FC<DeletePostButtonProps> = ({
             Cancel
           </Button>
           <Button
-            onClick={handleConfirmDelete}
+            onClick={() => {
+              deletePost();
+            }}
             color="error"
             variant="contained"
             disabled={isPending}

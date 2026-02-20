@@ -80,7 +80,7 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
             size="small"
             onClick={e => {
               e.stopPropagation();
-              setShowComments(s => !s);
+              setShowComments(showComments => !showComments);
             }}
           >
             <ChatBubbleOutlineIcon fontSize="small" color="primary" />
@@ -107,7 +107,7 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
       </CardActions>
 
       {showComments && (
-        <Box sx={{ padding: 2 }} onClick={e => e.stopPropagation()}>
+        <Box sx={styles.commentList} onClick={e => e.stopPropagation()}>
           {post.comments && <CommentList comments={post.comments} />}
           <AddComment postId={post.id} />
         </Box>
