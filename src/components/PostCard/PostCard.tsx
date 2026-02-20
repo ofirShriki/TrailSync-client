@@ -1,8 +1,8 @@
-import type React from 'react';
-import PostMetadata from './PostMetadata';
-import type { Post } from '../../types/post';
-import { GoogleMaps } from '../Icons/';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import type React from "react";
+import PostMetadata from "./PostMetadata";
+import type { Post } from "../../types/post";
+import { GoogleMaps } from "../Icons/";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import {
   Card,
   CardMedia,
@@ -13,12 +13,14 @@ import {
   Divider,
   IconButton,
   Avatar,
-} from '@mui/material';
-import styles from './PostCard.styles';
-import { useState } from 'react';
-import CommentList from '../CommentList';
-import AddComment from '../AddComment';
-import { getProfilePicturePath } from '../../utils/userUtils';
+} from "@mui/material";
+import styles from "./PostCard.styles";
+import { useState } from "react";
+import CommentList from "../CommentList";
+import AddComment from "../AddComment";
+import { getProfilePicturePath } from "../../utils/userUtils";
+import DeletePostButton from "../DeletePostButton";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface PostProperties {
   post: Post;
@@ -28,10 +30,12 @@ interface PostProperties {
 const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
   const firstPhoto = post.photos[0];
   const [showComments, setShowComments] = useState(false);
+  const { userId } = useAuth();
+  const isPostCurrentUserPost = userId === post.sender?.id;
 
   return (
-    <Card onClick={onCardClick} sx={styles.root}>
-      <Box sx={styles.cardContentContainer}>
+    <Card sx={styles.root}>
+      <Box onClick={onCardClick} sx={styles.cardContentContainer}>
         <CardContent sx={styles.cardContent}>
           <Box sx={styles.authorRow}>
             <Avatar
@@ -40,7 +44,7 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
             />
             <Box>
               <Typography variant="subtitle2" sx={styles.authorName}>
-                {post.sender?.username ?? 'Unknown'}
+                {post.sender?.username ?? "Unknown"}
               </Typography>
             </Box>
           </Box>
@@ -74,9 +78,9 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
         <Box sx={styles.comments}>
           <IconButton
             size="small"
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation();
-              setShowComments((s) => !s);
+              setShowComments(showComments => !showComments);
             }}
           >
             <ChatBubbleOutlineIcon fontSize="small" color="primary" />
@@ -86,18 +90,24 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
           </Typography>
         </Box>
 
-        <IconButton
-          component="a"
-          href={post.mapLink}
-          onClick={(e) => e.stopPropagation()}
-          size="small"
-        >
-          <Box component={GoogleMaps} />
-        </IconButton>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <IconButton
+            component="a"
+            href={post.mapLink}
+            onClick={e => e.stopPropagation()}
+            size="small"
+          >
+            <Box component={GoogleMaps} />
+          </IconButton>
+
+          {isPostCurrentUserPost && (
+            <DeletePostButton postId={post.id} userId={post.sender?.id} />
+          )}
+        </Box>
       </CardActions>
 
       {showComments && (
-        <Box sx={{ padding: 2 }} onClick={(e) => e.stopPropagation()}>
+        <Box sx={styles.commentList} onClick={e => e.stopPropagation()}>
           {post.comments && <CommentList comments={post.comments} />}
           <AddComment postId={post.id} />
         </Box>
