@@ -5,8 +5,8 @@ import { QUERY_KEYS } from '../../constants/queryKeys';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import UpsertPostModal from '../UpsertPostModal';
 import type { Post } from '../../types/post.js';
-import type { UpsertPostFormData } from '../UpsertPostModal/UpsertPostModal';
 import { urlsToFiles } from '../../utils/photoUtils';
+import type { UpsertPostFormData } from '../../types/uspertPostFormData.js';
 
 interface CreatePostModalProps {
   isModalOpen: boolean;
@@ -45,28 +45,11 @@ const UpdatePostModal: React.FC<CreatePostModalProps> = ({
 
   const initialValues: Partial<UpsertPostFormData> = useMemo(
     () => ({
-      title: post.title,
-      mapLink: post.mapLink,
-      price: post.price,
-      numberOfDays: post.numberOfDays,
-      location: {
-        country: post.location.country,
-        city: post.location.city,
-      },
-      description: post.description,
+      ...post,
       photos: photoFiles.length > 0 ? photoFiles : [],
       photosToDelete: [],
     }),
-    [
-      photoFiles,
-      post.description,
-      post.location.city,
-      post.location.country,
-      post.mapLink,
-      post.numberOfDays,
-      post.price,
-      post.title,
-    ]
+    [photoFiles, post]
   );
 
   return (

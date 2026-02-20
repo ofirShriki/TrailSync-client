@@ -1,9 +1,9 @@
-import type React from "react";
-import PostMetadata from "./PostMetadata";
-import type { Post } from "../../types/post";
-import { GoogleMaps } from "../Icons/";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import EditIcon from "@mui/icons-material/Edit";
+import type React from 'react';
+import PostMetadata from './PostMetadata';
+import type { Post } from '../../types/post';
+import { GoogleMaps } from '../Icons/';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import EditIcon from '@mui/icons-material/Edit';
 import {
   Card,
   CardMedia,
@@ -14,14 +14,14 @@ import {
   Divider,
   IconButton,
   Avatar,
-} from "@mui/material";
-import styles from "./PostCard.styles";
-import { useState } from "react";
-import CommentList from "../CommentList";
-import AddComment from "../AddComment";
-import { getProfilePicturePath } from "../../utils/userUtils";
-import { useAuth } from "../../contexts/AuthContext";
-import UpdatePostModal from "../UpdatePostModal";
+} from '@mui/material';
+import styles from './PostCard.styles';
+import { useState } from 'react';
+import CommentList from '../CommentList';
+import AddComment from '../AddComment';
+import { getProfilePicturePath } from '../../utils/userUtils';
+import { useAuth } from '../../contexts/AuthContext';
+import UpdatePostModal from '../UpdatePostModal';
 
 interface PostProperties {
   post: Post;
@@ -47,7 +47,7 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
             />
             <Box>
               <Typography variant="subtitle2" sx={styles.authorName}>
-                {post.sender?.username ?? "Unknown"}
+                {post.sender?.username ?? 'Unknown'}
               </Typography>
             </Box>
           </Box>
@@ -81,8 +81,7 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
         <Box sx={styles.leftActions}>
           <IconButton
             size="small"
-            onClick={e => {
-              e.stopPropagation();
+            onClick={() => {
               setShowComments(s => !s);
             }}
           >
@@ -95,8 +94,7 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
           {isPostCurrUserPost && (
             <IconButton
               size="small"
-              onClick={e => {
-                e.stopPropagation();
+              onClick={() => {
                 setIsUpdateModalOpen(true);
               }}
               title="Edit post"
@@ -117,7 +115,7 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
       </CardActions>
 
       {showComments && (
-        <Box sx={{ padding: 2 }} onClick={e => e.stopPropagation()}>
+        <Box sx={{ padding: 2 }}>
           {post.comments && <CommentList comments={post.comments} />}
           <AddComment postId={post.id} />
         </Box>

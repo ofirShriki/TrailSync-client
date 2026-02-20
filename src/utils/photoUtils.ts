@@ -9,9 +9,7 @@ export const urlToFile = async (
 };
 
 export const urlsToFiles = async (urls: string[]): Promise<File[]> => {
-  const files = await Promise.all(
-    urls.map((url, index) => urlToFile(url, `photo-${index}-${Date.now()}.jpg`))
-  );
+  const files = await Promise.all(urls.map(url => urlToFile(url, url)));
 
   return files;
 };

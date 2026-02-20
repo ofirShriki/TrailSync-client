@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Box,
   Typography,
@@ -6,35 +6,21 @@ import {
   TextField,
   Button,
   InputAdornment,
-  Card,
-  CardMedia,
   CircularProgress,
   Alert,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
-import CloseIcon from '@mui/icons-material/Close';
 import style from '../CreatePostModal/CreatePostModal.styles.ts';
 import GenericModal from '../GenericModal/index.ts';
 import { useForm, Controller } from 'react-hook-form';
 import { GoogleMaps } from '../Icons/index.ts';
 import { useMutation } from '@tanstack/react-query';
 import type { Post } from '../../types/post.ts';
-import { generatePhotosPreviews } from '../../utils/photoUtils';
-
-export interface UpsertPostFormData {
-  title: string;
-  mapLink: string;
-  price: number;
-  numberOfDays: number;
-  location: {
-    city?: string;
-    country: string;
-  };
-  description: string;
-  photos: File[];
-  photosToDelete?: string[];
-}
+import type { UpsertPostFormData } from '../../types/uspertPostFormData.ts';
+import PhotoPreviewCard from './PhotoPreviewCard/PhotoPreviewCard.tsx';
+import { onSubmitUpsertForm } from '../../utils/upsertPostUtils.ts';
+import { usePhotoManager } from '../../hooks/usePhotoManager.ts';
 
 interface UpsertPostModalProps {
   isModalOpen: boolean;
@@ -55,8 +41,6 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
   title,
   submitLabel,
 }) => {
-  const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
-
   const {
     control,
     handleSubmit,
@@ -74,15 +58,17 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
 
   const photoFiles = watch('photos');
 
-  const getFormerPhotoPreviews = async () => {
-    const previews = await generatePhotosPreviews(initialValues.photos ?? []);
-
-    setPhotoPreviews(previews);
-  };
-
-  useEffect(() => {
-    getFormerPhotoPreviews();
-  }, [initialValues.photos, setValue]);
+  const {
+    handlePhotoUpload,
+    handleRemovePhoto,
+    photoPreviews,
+    setPhotoPreviews,
+  } = usePhotoManager({
+    getValues,
+    setValue,
+    initialPhotos: initialValues.photos,
+    photoFiles,
+  });
 
   const {
     mutate: submitMutate,
@@ -103,78 +89,6 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
     setIsModalOpen(false);
   };
 
-  const handlePhotoUpload = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    onChange: (value: File[]) => void
-  ) => {
-    const files = event.target.files;
-
-    if (files) {
-      const newFiles = Array.from(files);
-      const newPreviews: string[] = [];
-
-      newFiles.forEach(file => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          newPreviews.push(reader.result as string);
-
-          if (newPreviews.length === newFiles.length) {
-            setPhotoPreviews(prev => [...prev, ...newPreviews]);
-          }
-        };
-
-        reader.readAsDataURL(file);
-      });
-
-      const updatedFiles = [...photoFiles, ...newFiles];
-      onChange(updatedFiles);
-    }
-  };
-
-  const handleRemovePhoto = (
-    index: number,
-    onChange: (value: File[]) => void
-  ) => {
-    const removedFile = initialValues.photos?.find((_, i) => i === index);
-
-    if (removedFile && initialValues.photos?.includes(removedFile)) {
-      const currentPhotosToDelete = getValues('photosToDelete') || [];
-      setValue('photosToDelete', [
-        ...currentPhotosToDelete,
-        `${removedFile.name}`,
-      ]);
-    }
-
-    const updatedFiles = photoFiles.filter((_, i) => i !== index);
-    onChange(updatedFiles);
-    setPhotoPreviews(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const onSubmitForm = (data: UpsertPostFormData) => {
-    const formData = new FormData();
-    formData.append('title', data.title);
-    formData.append('mapLink', data.mapLink);
-    formData.append('price', data.price.toString());
-    formData.append('numberOfDays', data.numberOfDays.toString());
-    formData.append('location[country]', data.location.country);
-
-    if (data.location.city) {
-      formData.append('location[city]', data.location.city);
-    }
-
-    formData.append('description', data.description);
-
-    data.photosToDelete?.forEach(photo => {
-      formData.append('photosToDelete', photo);
-    });
-
-    data.photos.forEach(file => {
-      formData.append('photos', file);
-    });
-
-    submitMutate(formData);
-  };
-
   return (
     <GenericModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
       <Box sx={style.header}>
@@ -185,7 +99,9 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
       </Box>
       <Box
         component="form"
-        onSubmit={handleSubmit(onSubmitForm)}
+        onSubmit={handleSubmit(() =>
+          onSubmitUpsertForm(getValues(), submitMutate)
+        )}
         sx={style.form}
       >
         <Controller
@@ -371,21 +287,12 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
               {photoPreviews.length > 0 && (
                 <Box sx={style.photoPreviewContainer}>
                   {photoPreviews.map((preview, index) => (
-                    <Card key={index} sx={style.photoCard}>
-                      <CardMedia
-                        component="img"
-                        image={preview}
-                        alt={`Preview ${index + 1}`}
-                        sx={style.photoImage}
-                      />
-                      <IconButton
-                        size="small"
-                        onClick={() => handleRemovePhoto(index, onChange)}
-                        sx={style.photoRemoveButton}
-                      >
-                        <CloseIcon fontSize="small" />
-                      </IconButton>
-                    </Card>
+                    <PhotoPreviewCard
+                      index={index}
+                      image={preview}
+                      onChange={onChange}
+                      handleRemovePhoto={handleRemovePhoto}
+                    />
                   ))}
                 </Box>
               )}
