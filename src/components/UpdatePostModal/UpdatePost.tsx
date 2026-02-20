@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { postService } from '../../services/postService';
 import { QUERY_KEYS } from '../../constants/queryKeys';
@@ -21,7 +21,7 @@ const UpdatePostModal: React.FC<CreatePostModalProps> = ({
 }) => {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
-  const [photoFiles, setPhotoFiles] = React.useState<File[]>([]);
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
 
   const getFilesFromUrls = async (urls: string[]) => {
     const files = await urlsToFiles(urls);
@@ -43,8 +43,8 @@ const UpdatePostModal: React.FC<CreatePostModalProps> = ({
     });
   };
 
-  const initialValues: Partial<UpsertPostFormData> = useMemo(() => {
-    return {
+  const initialValues: Partial<UpsertPostFormData> = useMemo(
+    () => ({
       title: post.title,
       mapLink: post.mapLink,
       price: post.price,
@@ -55,19 +55,19 @@ const UpdatePostModal: React.FC<CreatePostModalProps> = ({
       },
       description: post.description,
       photos: photoFiles.length > 0 ? photoFiles : [],
-      photosToDelete: post.photos,
-    };
-  }, [
-    photoFiles,
-    post.description,
-    post.location.city,
-    post.location.country,
-    post.mapLink,
-    post.numberOfDays,
-    post.photos,
-    post.price,
-    post.title,
-  ]);
+      photosToDelete: [],
+    }),
+    [
+      photoFiles,
+      post.description,
+      post.location.city,
+      post.location.country,
+      post.mapLink,
+      post.numberOfDays,
+      post.price,
+      post.title,
+    ]
+  );
 
   return (
     <UpsertPostModal

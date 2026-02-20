@@ -64,20 +64,11 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
     reset,
     watch,
     setValue,
+    getValues,
   } = useForm<UpsertPostFormData>({
     mode: 'onChange',
     defaultValues: {
-      title: initialValues.title || '',
-      mapLink: initialValues.mapLink || '',
-      price: initialValues.price ?? 0,
-      numberOfDays: initialValues.numberOfDays ?? 0,
-      location: {
-        country: initialValues.location?.country || '',
-        city: initialValues.location?.city || '',
-      },
-      description: initialValues.description || '',
-      photos: initialValues.photos || [],
-      photosToDelete: initialValues.photosToDelete || [],
+      ...initialValues,
     },
   });
 
@@ -85,18 +76,13 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
 
   const getFormerPhotoPreviews = async () => {
     const previews = await generatePhotosPreviews(initialValues.photos ?? []);
+
     setPhotoPreviews(previews);
   };
 
   useEffect(() => {
     getFormerPhotoPreviews();
-    setValue(
-      'photos',
-      initialValues.photos && initialValues.photos.length > 0
-        ? initialValues.photos
-        : []
-    );
-  }, [initialValues.photos, initialValues.photosToDelete]);
+  }, [initialValues.photos, setValue]);
 
   const {
     mutate: submitMutate,
@@ -149,6 +135,16 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
     index: number,
     onChange: (value: File[]) => void
   ) => {
+    const removedFile = initialValues.photos?.find((_, i) => i === index);
+
+    if (removedFile && initialValues.photos?.includes(removedFile)) {
+      const currentPhotosToDelete = getValues('photosToDelete') || [];
+      setValue('photosToDelete', [
+        ...currentPhotosToDelete,
+        `${removedFile.name}`,
+      ]);
+    }
+
     const updatedFiles = photoFiles.filter((_, i) => i !== index);
     onChange(updatedFiles);
     setPhotoPreviews(prev => prev.filter((_, i) => i !== index));
@@ -340,7 +336,9 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
           control={control}
           rules={{
             validate: value =>
-              (value && value.length > 0) || 'At least one photo is required',
+              (value && value.length > 0) ||
+              photoPreviews.length > 0 ||
+              'At least one photo is required',
           }}
           render={({ field: { onChange } }) => (
             <Box>
