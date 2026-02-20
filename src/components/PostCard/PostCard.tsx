@@ -22,6 +22,7 @@ import AddComment from '../AddComment';
 import { getProfilePicturePath } from '../../utils/userUtils';
 import { useAuth } from '../../contexts/AuthContext';
 import UpdatePostModal from '../UpdatePostModal';
+import DeletePostButton from '../DeletePostButton';
 
 interface PostProperties {
   post: Post;
@@ -82,7 +83,7 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
           <IconButton
             size="small"
             onClick={() => {
-              setShowComments(s => !s);
+              setShowComments(showComments => !showComments);
             }}
           >
             <ChatBubbleOutlineIcon fontSize="small" color="primary" />
@@ -104,14 +105,19 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
           )}
         </Box>
 
-        <IconButton
-          component="a"
-          href={post.mapLink}
-          onClick={e => e.stopPropagation()}
-          size="small"
-        >
-          <Box component={GoogleMaps} />
-        </IconButton>
+        <Box>
+          {isPostCurrUserPost && (
+            <DeletePostButton postId={post.id} userId={post.sender?.id} />
+          )}
+          <IconButton
+            component="a"
+            href={post.mapLink}
+            onClick={e => e.stopPropagation()}
+            size="small"
+          >
+            <Box component={GoogleMaps} />
+          </IconButton>
+        </Box>
       </CardActions>
 
       {showComments && (

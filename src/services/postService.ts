@@ -72,6 +72,10 @@ export const postService = {
     );
     return response.data;
   },
+
+  async deletePost(postId: string): Promise<void> {
+    await axiosInstance.delete(`/post/${postId}`);
+  },
 };
 
 export default postService;

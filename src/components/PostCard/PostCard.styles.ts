@@ -53,6 +53,8 @@ const styles = {
 
   leftActions: { display: 'flex', alignItems: 'center', gap: 0.5 },
 
+  commentList: { padding: 2 },
+
   metadata: {
     display: 'flex',
     alignItems: 'center',
