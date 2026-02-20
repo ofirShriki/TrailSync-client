@@ -1,5 +1,5 @@
-import type React from "react";
-import Box from "@mui/material/Box";
+import type React from 'react';
+import Box from '@mui/material/Box';
 import {
   Avatar,
   Button,
@@ -7,23 +7,24 @@ import {
   IconButton,
   Skeleton,
   Typography,
-} from "@mui/material";
-import PostList from "../../components/PostList";
-import { Add, Edit } from "@mui/icons-material";
-import { useState } from "react";
-import EditProfileModal from "../../components/EditProfileModal";
-import CreatePostModal from "../../components/CreatePostModal";
-import styles from "./Profile.styles";
-import { useAuth } from "../../contexts/AuthContext";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { QUERY_KEYS } from "../../constants/queryKeys";
-import userService from "../../services/userService";
-import postService from "../../services/postService";
+} from '@mui/material';
+import PostList from '../../components/PostList';
+import { Add, Edit } from '@mui/icons-material';
+import { useState } from 'react';
+import EditProfileModal from '../../components/EditProfileModal';
+import CreatePostModal from '../../components/CreatePostModal';
+import styles from './Profile.styles';
+import { useAuth } from '../../contexts/AuthContext';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '../../constants/queryKeys';
+import userService from '../../services/userService';
+import postService from '../../services/postService';
+import type { Post } from '../../types/post';
 
 const Profile: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [imageRefreshKey, setImageRefreshKey] = useState("");
+  const [imageRefreshKey, setImageRefreshKey] = useState('');
   const [imageLoading, setImageLoading] = useState(false);
   const { userId } = useAuth();
   const queryClient = useQueryClient();
@@ -38,7 +39,9 @@ const Profile: React.FC = () => {
     queryKey: [QUERY_KEYS.POSTS_BY_USER, userId],
     enabled: !!userId,
     queryFn: async () =>
-      (await postService.getAllPosts({ filters: { sender: userId! } })).data,
+      (await postService.getAllPosts({
+        filters: { sender: userId! },
+      })) as Post[],
   });
 
   const handleRefetchProfile = () => {
@@ -63,9 +66,9 @@ const Profile: React.FC = () => {
               />
             )}
             <Avatar
-              src={`${user?.profilePicture}${imageRefreshKey ? `?t=${imageRefreshKey}` : ""}`}
+              src={`${user?.profilePicture}${imageRefreshKey ? `?t=${imageRefreshKey}` : ''}`}
               alt={user?.username}
-              sx={{ ...styles.avatar, display: imageLoading ? "none" : "flex" }}
+              sx={{ ...styles.avatar, display: imageLoading ? 'none' : 'flex' }}
               onLoad={() => setImageLoading(false)}
             />
             <Box>
@@ -74,7 +77,7 @@ const Profile: React.FC = () => {
                   {user?.username}
                 </Typography>
 
-                <Box sx={{ display: "flex", gap: 1 }}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
                   <IconButton
                     color="primary"
                     onClick={() => setIsEditModalOpen(true)}

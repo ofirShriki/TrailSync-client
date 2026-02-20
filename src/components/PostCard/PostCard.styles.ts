@@ -1,21 +1,21 @@
 const styles = {
   root: {
-    width: "100%",
-    cursor: "pointer",
+    width: '100%',
+    cursor: 'pointer',
     borderRadius: 4,
-    overflow: "hidden",
-    transition: "transform 0.15s ease, box-shadow 0.15s ease",
+    overflow: 'hidden',
+    transition: 'transform 0.15s ease, box-shadow 0.15s ease',
     padding: 1,
 
-    "&:hover": {
-      transform: "translateY(-2px)",
+    '&:hover': {
+      transform: 'translateY(-2px)',
       boxShadow: 4,
     },
   },
 
   cardContentContainer: {
-    display: "flex",
-    justifyContent: "space-between",
+    display: 'flex',
+    justifyContent: 'space-between',
     minHeight: 160,
   },
 
@@ -29,11 +29,11 @@ const styles = {
 
   postDescription: {
     marginTop: 1,
-    display: "-webkit-box",
+    display: '-webkit-box',
     WebkitLineClamp: 3,
-    WebkitBoxOrient: "vertical",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
 
   media: {
@@ -41,23 +41,23 @@ const styles = {
     height: 160,
     padding: 1,
     borderRadius: 3,
-    objectFit: "cover",
+    objectFit: 'cover',
   },
 
   actions: {
     paddingX: 2,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 
-  comments: { display: "flex", alignItems: "center", gap: 0.5 },
+  leftActions: { display: 'flex', alignItems: 'center', gap: 0.5 },
 
   commentList: { padding: 2 },
 
   metadata: {
-    display: "flex",
-    alignItems: "center",
+    display: 'flex',
+    alignItems: 'center',
     marginTop: 1,
   },
 
@@ -66,8 +66,8 @@ const styles = {
   },
 
   authorRow: {
-    display: "flex",
-    alignItems: "center",
+    display: 'flex',
+    alignItems: 'center',
     gap: 1,
     marginBottom: 1,
   },
