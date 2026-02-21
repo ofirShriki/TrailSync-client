@@ -51,7 +51,9 @@ const styles = {
     justifyContent: 'space-between',
   },
 
-  comments: { display: 'flex', alignItems: 'center', gap: 0.5 },
+  leftActions: { display: 'flex', alignItems: 'center', gap: 0.5 },
+
+  commentList: { padding: 2 },
 
   metadata: {
     display: 'flex',

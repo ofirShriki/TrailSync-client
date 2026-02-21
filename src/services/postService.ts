@@ -1,6 +1,6 @@
-import axiosInstance from "./axiosInstance";
-import type { Post } from "../types/post";
-import type { FiltersState } from "../components/FiltersBar";
+import axiosInstance from './axiosInstance';
+import type { Post } from '../types/post';
+import type { FiltersState } from '../components/FiltersBar';
 
 export interface CreatePostData {
   title: string;
@@ -31,9 +31,9 @@ export const postService = {
     filters?: GetPostsFilters;
     page?: number;
     batchSize?: number;
-  }): Promise<PaginatedPostsResponse> {
+  }): Promise<PaginatedPostsResponse | Post[]> {
     const { filters = {}, page, batchSize } = params;
-    const response = await axiosInstance.get<PaginatedPostsResponse>("/post", {
+    const response = await axiosInstance.get<PaginatedPostsResponse>('/post', {
       params: {
         ...filters,
         ...(page &&
@@ -43,16 +43,34 @@ export const postService = {
           }),
       },
     });
+
     return response.data;
   },
 
   async createPost(formData: FormData): Promise<Post> {
-    const response = await axiosInstance.post<Post>("/post", formData, {
+    const response = await axiosInstance.post<Post>('/post', formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data',
       },
     });
     return response.data;
+  },
+
+  async updatePost(postId: string, formData: FormData): Promise<Post> {
+    const response = await axiosInstance.put<Post>(
+      `/post/${postId}`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    return response.data;
+  },
+
+  async deletePost(postId: string): Promise<void> {
+    await axiosInstance.delete(`/post/${postId}`);
   },
 };
 
