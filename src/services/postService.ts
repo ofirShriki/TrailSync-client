@@ -1,5 +1,6 @@
 import axiosInstance from "./axiosInstance";
 import type { Post } from "../types/post";
+import type { FiltersState } from "../components/FiltersBar";
 
 export interface CreatePostData {
   title: string;
@@ -16,13 +17,8 @@ export interface CreatePostData {
 
 export interface UpdatePostData extends Partial<CreatePostData> {}
 
-export interface GetPostsFilters {
+export interface GetPostsFilters extends FiltersState {
   sender?: string;
-  country?: string;
-  maxPrice?: number;
-  city?: string;
-  minDays?: number;
-  maxDays?: number;
 }
 
 export interface PaginatedPostsResponse {

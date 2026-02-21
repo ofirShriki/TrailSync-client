@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   TextField,
@@ -7,10 +7,12 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
-import { pickBy, identity } from "lodash";
+import { pickBy, identity, isEmpty } from "lodash";
+import { useQuery } from "@tanstack/react-query";
 import { GetCountries } from "react-country-state-city";
 import "react-country-state-city/dist/react-country-state-city.css";
 import styles from "./FiltersBar.styles";
+import { QUERY_KEYS } from "../../constants/queryKeys";
 
 interface FiltersBarProps {
   onApplyFilters: (filters: FiltersState) => void;
@@ -31,27 +33,25 @@ interface Country {
   iso2: string;
 }
 
+const defaultFilters: FiltersState = {
+  minDays: undefined,
+  maxDays: undefined,
+  maxPrice: undefined,
+  country: undefined,
+  city: undefined,
+};
+
 const FiltersBar: React.FC<FiltersBarProps> = ({
   onApplyFilters,
   onClearFilters,
 }) => {
-  const [countries, setCountries] = useState<Country[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
-  const [filters, setFilters] = useState<FiltersState>({
-    minDays: undefined,
-    maxDays: undefined,
-    maxPrice: undefined,
-    country: undefined,
-    city: undefined,
+  const [filters, setFilters] = useState<FiltersState>(defaultFilters);
+
+  const { data: countries = [] } = useQuery({
+    queryKey: [QUERY_KEYS.COUNTRIES],
+    queryFn: () => GetCountries(),
   });
-
-  useEffect(() => {
-    const fetchCountries = async () => {
-      setCountries(await GetCountries());
-    };
-
-    fetchCountries();
-  }, []);
 
   const handleApply = () => {
     const activeFilters = pickBy(filters, identity) as FiltersState;
@@ -59,19 +59,13 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
   };
 
   const handleClear = () => {
-    setFilters({
-      minDays: undefined,
-      maxDays: undefined,
-      maxPrice: undefined,
-      country: undefined,
-      city: undefined,
-    });
+    setFilters(defaultFilters);
     setSelectedCountry(null);
     onClearFilters();
   };
 
   const hasActiveFilters = Object.values(filters).some(
-    value => value !== undefined && value !== ""
+    value => !isEmpty(value)
   );
 
   return (
