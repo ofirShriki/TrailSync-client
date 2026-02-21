@@ -22,7 +22,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { login: authLogin, isAuthenticated } = useAuth();
 
-  // const [isGoogleLoginError, setIsGoogleLoginError] = useState(false);
+  const [isGoogleLoginError, setIsGoogleLoginError] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -30,21 +30,21 @@ const Login = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  // const googleLogin = useGoogleLogin({
-  //   onSuccess: async (credentialsRes: TokenResponse) => {
-  //     try {
-  //       const { tokens, userId } = await authService.googleLogin(
-  //         credentialsRes.access_token ?? ''
-  //       );
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (credentialsRes: TokenResponse) => {
+      try {
+        const { tokens, userId } = await authService.googleLogin(
+          credentialsRes.access_token ?? ''
+        );
 
-  //       authLogin(tokens.token, tokens.refreshToken, userId);
+        authLogin(tokens.token, tokens.refreshToken, userId);
 
-  //       navigate(PATHS.HOME);
-  //     } catch (_err) {
-  //       setIsGoogleLoginError(true);
-  //     }
-  //   },
-  // });
+        navigate(PATHS.HOME);
+      } catch (_err) {
+        setIsGoogleLoginError(true);
+      }
+    },
+  });
 
   const {
     control,
@@ -89,9 +89,9 @@ const Login = () => {
               'Login failed. Please check your credentials.'}
           </Alert>
         )}
-        {/* {isGoogleLoginError && (
+        {isGoogleLoginError && (
           <Alert severity="error">Login failed. Please try again</Alert>
-        )} */}
+        )}
 
         <Controller
           name="email"
@@ -151,7 +151,7 @@ const Login = () => {
           {isPending ? <CircularProgress size={24} /> : 'Log In'}
         </Button>
 
-        {/* <Button
+        <Button
           variant="outlined"
           color="primary"
           fullWidth
@@ -160,7 +160,7 @@ const Login = () => {
           sx={styles.googleButton}
         >
           <img src={googleIcon} alt="Google" /> Log In with Google
-        </Button> */}
+        </Button>
       </Box>
 
       <Typography sx={styles.signUpText}>
