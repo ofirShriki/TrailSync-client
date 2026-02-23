@@ -42,7 +42,6 @@ const styles = {
 
   searchInput: {
     width: '100%',
-    padding: '12px 45px 12px 20px',
     fontSize: 16,
     lineHeight: '20px',
     borderRadius: 8,

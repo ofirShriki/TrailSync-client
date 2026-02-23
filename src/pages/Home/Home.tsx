@@ -1,6 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, Fab, Typography } from '@mui/material';
+import { Box, Fab, Typography, TextField } from '@mui/material';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { pickBy, identity } from 'lodash';
 import type React from 'react';
@@ -67,9 +67,8 @@ const Home: React.FC = () => {
     <Box sx={styles.root}>
       <Box sx={styles.searchContainer}>
         <Box sx={styles.searchWrapper}>
-          <input
-            type="text"
-            placeholder="Ai generated search - describe you next travel, with your own words..."
+          <TextField
+            placeholder="Ai generated search - describe your next trip, with your own words..."
             value={searchQuery}
             onChange={event => setSearchQuery(event.target.value)}
             onKeyDown={event => {
