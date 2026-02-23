@@ -69,6 +69,16 @@ export const postService = {
     return response.data;
   },
 
+  async searchPosts(params: { query: string }): Promise<Post[]> {
+    const { query } = params;
+
+    const response = await axiosInstance.post<Post[]>('/post/search', {
+      query,
+    });
+
+    return response.data;
+  },
+
   async deletePost(postId: string): Promise<void> {
     await axiosInstance.delete(`/post/${postId}`);
   },
