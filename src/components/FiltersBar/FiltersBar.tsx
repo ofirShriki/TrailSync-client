@@ -1,18 +1,18 @@
-import React, { useState } from "react";
 import {
-  Box,
-  TextField,
-  Button,
   Autocomplete,
-  Typography,
+  Box,
+  Button,
   Paper,
-} from "@mui/material";
-import { pickBy, identity, isEmpty } from "lodash";
-import { useQuery } from "@tanstack/react-query";
-import { GetCountries } from "react-country-state-city";
-import "react-country-state-city/dist/react-country-state-city.css";
-import styles from "./FiltersBar.styles";
-import { QUERY_KEYS } from "../../constants/queryKeys";
+  TextField,
+  Typography,
+} from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import { identity, isNil, pickBy } from 'lodash';
+import React, { useMemo, useState } from 'react';
+import { GetCountries } from 'react-country-state-city';
+import 'react-country-state-city/dist/react-country-state-city.css';
+import { QUERY_KEYS } from '../../constants/queryKeys';
+import styles from './FiltersBar.styles';
 
 interface FiltersBarProps {
   onApplyFilters: (filters: FiltersState) => void;
@@ -64,8 +64,9 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
     onClearFilters();
   };
 
-  const hasActiveFilters = Object.values(filters).some(
-    value => !isEmpty(value)
+  const hasActiveFilters = useMemo(
+    () => Object.values(filters).some(value => !isNil(value)),
+    [filters]
   );
 
   return (
@@ -75,7 +76,7 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
           label="Min Days"
           type="number"
           size="small"
-          value={filters.minDays ?? ""}
+          value={filters.minDays ?? ''}
           onChange={e =>
             setFilters(prev => ({
               ...prev,
@@ -89,7 +90,7 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
           label="Max Days"
           type="number"
           size="small"
-          value={filters.maxDays ?? ""}
+          value={filters.maxDays ?? ''}
           onChange={e =>
             setFilters(prev => ({
               ...prev,
@@ -103,7 +104,7 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
           label="Max Price"
           type="number"
           size="small"
-          value={filters.maxPrice ?? ""}
+          value={filters.maxPrice ?? ''}
           onChange={e =>
             setFilters(prev => ({
               ...prev,
@@ -138,7 +139,7 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
         <TextField
           label="City"
           size="small"
-          value={filters.city ?? ""}
+          value={filters.city ?? ''}
           onChange={e =>
             setFilters(prev => ({
               ...prev,
@@ -146,7 +147,7 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
             }))
           }
           disabled={!selectedCountry}
-          placeholder={!selectedCountry ? "Select country first" : ""}
+          placeholder={!selectedCountry ? 'Select country first' : ''}
           sx={styles.inputField}
         />
         <Button
