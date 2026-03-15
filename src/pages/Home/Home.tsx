@@ -1,7 +1,7 @@
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box, Fab, Typography, TextField } from '@mui/material';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { pickBy, identity } from 'lodash';
 import type React from 'react';
 import { useMemo, useState } from 'react';
@@ -20,6 +20,11 @@ const Home: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<FiltersState>({});
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const queryClient = useQueryClient();
+
+  const resetPostsPagination = () => {
+    queryClient.removeQueries({ queryKey: [QUERY_KEYS.POSTS] });
+  };
 
   const {
     data,
@@ -84,8 +89,14 @@ const Home: React.FC = () => {
 
       <Box sx={styles.filtersContainer}>
         <FiltersBar
-          onApplyFilters={filters => setAppliedFilters(filters)}
-          onClearFilters={() => setAppliedFilters({})}
+          onApplyFilters={filters => {
+            resetPostsPagination();
+            setAppliedFilters(filters);
+          }}
+          onClearFilters={() => {
+            resetPostsPagination();
+            setAppliedFilters({});
+          }}
         />
       </Box>
 
