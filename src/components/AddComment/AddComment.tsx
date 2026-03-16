@@ -6,9 +6,12 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '../../constants/queryKeys';
 import userService from '../../services/userService';
-import commetService, { type CreateCommentData } from '../../services/commentService';
+import commetService, {
+  type CreateCommentData,
+} from '../../services/commentService';
 import type { Comment } from '../../types/comment';
 import { getProfilePicturePath } from '../../utils/userUtils';
+import type { Post } from '../../types/post';
 
 type Props = {
   postId: string;
@@ -22,21 +25,51 @@ const AddComment: React.FC<Props> = ({ postId, onAddComment }) => {
 
   const { data: currentUser } = useQuery({
     queryKey: [QUERY_KEYS.USER_BY_ID, userId],
-    queryFn: () => (userId ? userService.getUserById(userId) : Promise.reject('No user ID')),
+    queryFn: () =>
+      userId ? userService.getUserById(userId) : Promise.reject('No user ID'),
     enabled: !!userId,
   });
 
   const { mutate: createComment, isPending: isLoading } = useMutation({
     mutationFn: (data: CreateCommentData) => commetService.createComment(data),
-    onSuccess: (newComment) => {
+    onSuccess: newComment => {
       onAddComment?.(newComment);
 
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.POSTS],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.POSTS_BY_USER, userId],
-      });
+      const updatePosts = (
+        oldData:
+          | {
+              pages: {
+                data: Post[];
+                hasMore: boolean;
+              }[];
+              pageParams: number[];
+            }
+          | undefined
+      ) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          pages: oldData.pages.map(page => ({
+            ...page,
+            data: page.data.map(post =>
+              post.id === newComment.post
+                ? {
+                    ...post,
+                    comments: [...(post.comments ?? []), newComment],
+                  }
+                : post
+            ),
+          })),
+        };
+      };
+
+      queryClient.setQueriesData({ queryKey: [QUERY_KEYS.POSTS] }, updatePosts);
+
+      queryClient.setQueriesData(
+        { queryKey: [QUERY_KEYS.POSTS_BY_USER] },
+        updatePosts
+      );
     },
   });
 
@@ -71,7 +104,7 @@ const AddComment: React.FC<Props> = ({ postId, onAddComment }) => {
         maxRows={10}
         placeholder="Write a comment..."
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={e => setText(e.target.value)}
         onKeyPress={handleKeyPress}
         variant="outlined"
         size="small"
