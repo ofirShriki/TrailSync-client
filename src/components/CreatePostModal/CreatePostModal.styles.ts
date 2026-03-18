@@ -7,10 +7,11 @@ const styles = {
   },
 
   form: {
-    display: ' flex',
+    display: 'flex',
     flexDirection: 'column',
     gap: 3,
     overflowY: 'auto',
+    paddingTop: 2,
   },
 
   formRow: {
@@ -31,6 +32,13 @@ const styles = {
     display: 'flex',
     gap: 1,
     flexWrap: 'wrap',
+  },
+
+  photoLimitWarning: {
+    color: '#ed6c02',
+    fontSize: '0.75rem',
+    mt: 0.5,
+    fontWeight: 500,
   },
 };
 
