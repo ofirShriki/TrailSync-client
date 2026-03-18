@@ -35,7 +35,18 @@ const AddComment: React.FC<Props> = ({ postId, onAddComment }) => {
     onSuccess: newComment => {
       onAddComment?.(newComment);
 
-      const updatePosts = (
+      const updatePosts = (oldPosts: Post[] | undefined) => {
+        return oldPosts?.map(post =>
+          post.id === newComment.post
+            ? {
+                ...post,
+                comments: [...(post.comments ?? []), newComment],
+              }
+            : post
+        );
+      };
+
+      const updatePostsWithPaging = (
         oldData:
           | {
               pages: {
@@ -52,19 +63,15 @@ const AddComment: React.FC<Props> = ({ postId, onAddComment }) => {
           ...oldData,
           pages: oldData.pages.map(page => ({
             ...page,
-            data: page.data.map(post =>
-              post.id === newComment.post
-                ? {
-                    ...post,
-                    comments: [...(post.comments ?? []), newComment],
-                  }
-                : post
-            ),
+            data: updatePosts(page.data) ?? page.data,
           })),
         };
       };
 
-      queryClient.setQueriesData({ queryKey: [QUERY_KEYS.POSTS] }, updatePosts);
+      queryClient.setQueriesData(
+        { queryKey: [QUERY_KEYS.POSTS] },
+        updatePostsWithPaging
+      );
 
       queryClient.setQueriesData(
         { queryKey: [QUERY_KEYS.POSTS_BY_USER] },
