@@ -202,7 +202,10 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
                 label="Price"
                 type="number"
                 fullWidth
-                onChange={e => field.onChange(Number(e.target.value))}
+                onChange={e => {
+                  const val = e.target.value;
+                  field.onChange(val === '' ? '' : Number(val));
+                }}
                 error={!!errors.price}
                 helperText={errors.price?.message}
                 slotProps={{
@@ -229,7 +232,10 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
                 label="Duration (days)"
                 type="number"
                 fullWidth
-                onChange={e => field.onChange(Number(e.target.value))}
+                onChange={e => {
+                  const val = e.target.value;
+                  field.onChange(val === '' ? '' : Number(val));
+                }}
                 error={!!errors.numberOfDays}
                 helperText={errors.numberOfDays?.message}
               />
