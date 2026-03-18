@@ -4,6 +4,8 @@ import type { Post } from '../../types/post';
 import { GoogleMaps } from '../Icons/';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import EditIcon from '@mui/icons-material/Edit';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import {
   Card,
   CardMedia,
@@ -23,6 +25,9 @@ import { getProfilePicturePath } from '../../utils/userUtils';
 import { useAuth } from '../../contexts/AuthContext';
 import UpdatePostModal from '../UpdatePostModal';
 import DeletePostButton from '../DeletePostButton';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '../../constants/queryKeys';
+import postService from '../../services/postService';
 
 interface PostProperties {
   post: Post;
@@ -31,11 +36,69 @@ interface PostProperties {
 
 const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
   const { userId } = useAuth();
+  const queryClient = useQueryClient();
   const firstPhoto = post.photos[0];
   const [showComments, setShowComments] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const isPostCurrUserPost = userId === post.sender?.id;
+  const isLiked = !!userId && (post.likes ?? []).includes(userId);
+  const likeCount = post.likes?.length ?? 0;
+
+  const updateLikesInCache = (postId: string, updatedLikes: string[]) => {
+    const updatePosts = (oldPosts: Post[] | undefined) =>
+      oldPosts?.map(post =>
+        post.id === postId ? { ...post, likes: updatedLikes } : post
+      );
+
+    queryClient.setQueriesData(
+      { queryKey: [QUERY_KEYS.POSTS] },
+      (
+        oldData:
+          | {
+              pages: { data: Post[]; hasMore: boolean }[];
+              pageParams: number[];
+            }
+          | undefined
+      ) => {
+        if (!oldData) {
+          return oldData;
+        }
+
+        return {
+          ...oldData,
+          pages: oldData.pages.map(page => ({
+            ...page,
+            data: updatePosts(page.data) ?? page.data,
+          })),
+        };
+      }
+    );
+
+    queryClient.setQueriesData(
+      { queryKey: [QUERY_KEYS.POSTS_BY_USER] },
+      updatePosts
+    );
+  };
+
+  const { mutate: toggleLike } = useMutation({
+    mutationFn: (wasLiked: boolean) =>
+      wasLiked
+        ? postService.unlikePost(post.id)
+        : postService.likePost(post.id),
+    onMutate: (wasLiked: boolean) => {
+      const previousLikes = post.likes ?? [];
+      const updatedLikes = wasLiked
+        ? previousLikes.filter(id => id !== userId)
+        : [...previousLikes, userId!];
+      updateLikesInCache(post.id, updatedLikes);
+
+      return { previousLikes };
+    },
+    onError: (_err, _wasLiked, context) => {
+      updateLikesInCache(post.id, context?.previousLikes ?? []);
+    },
+  });
 
   return (
     <Card sx={styles.root}>
@@ -90,6 +153,17 @@ const PostCard: React.FC<PostProperties> = ({ post, onCardClick }) => {
           </IconButton>
           <Typography variant="body2" color="text.secondary">
             {post.comments?.length}
+          </Typography>
+
+          <IconButton size="small" onClick={() => toggleLike(isLiked)}>
+            {isLiked ? (
+              <FavoriteIcon fontSize="small" sx={{ color: 'error.main' }} />
+            ) : (
+              <FavoriteBorderIcon fontSize="small" color="primary" />
+            )}
+          </IconButton>
+          <Typography variant="body2" color="text.secondary">
+            {likeCount}
           </Typography>
 
           {isPostCurrUserPost && (

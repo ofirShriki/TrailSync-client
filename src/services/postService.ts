@@ -82,6 +82,14 @@ export const postService = {
   async deletePost(postId: string): Promise<void> {
     await axiosInstance.delete(`/post/${postId}`);
   },
+
+  async likePost(postId: string): Promise<void> {
+    await axiosInstance.post(`/post/${postId}/like`);
+  },
+
+  async unlikePost(postId: string): Promise<void> {
+    await axiosInstance.delete(`/post/${postId}/like`);
+  },
 };
 
 export default postService;
