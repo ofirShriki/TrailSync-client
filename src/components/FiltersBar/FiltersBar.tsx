@@ -154,7 +154,6 @@ const FiltersBar: React.FC<FiltersBarProps> = ({
           variant="outlined"
           size="small"
           onClick={handleClear}
-          disabled={!hasActiveFilters}
           sx={styles.button}
         >
           Clear
