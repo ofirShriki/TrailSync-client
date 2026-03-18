@@ -7,10 +7,11 @@ const styles = {
   },
 
   form: {
-    display: ' flex',
+    display: 'flex',
     flexDirection: 'column',
     gap: 3,
     overflowY: 'auto',
+    paddingTop: 2,
   },
 
   formRow: {
