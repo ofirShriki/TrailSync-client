@@ -20,7 +20,7 @@ import type { Post } from '../../types/post.ts';
 import type { UpsertPostFormData } from '../../types/uspertPostFormData.ts';
 import PhotoPreviewCard from './PhotoPreviewCard/PhotoPreviewCard.tsx';
 import { onSubmitUpsertForm } from '../../utils/upsertPostUtils.ts';
-import { usePhotoManager } from '../../hooks/usePhotoManager.ts';
+import { MAX_PHOTOS, usePhotoManager } from '../../hooks/usePhotoManager.ts';
 
 interface UpsertPostModalProps {
   isModalOpen: boolean;
@@ -41,6 +41,9 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
   title,
   submitLabel,
 }) => {
+  const [photoLimitWarning, setPhotoLimitWarning] = React.useState<
+    string | null
+  >(null);
   const {
     control,
     handleSubmit,
@@ -264,10 +267,19 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
           name="photos"
           control={control}
           rules={{
-            validate: value =>
-              (value && value.length > 0) ||
-              photoPreviews.length > 0 ||
-              'At least one photo is required',
+            validate: value => {
+              console.log({ value });
+
+              if (value.length === 0 && photoPreviews.length === 0) {
+                return 'At least one photo is required';
+              }
+
+              if (value.length > MAX_PHOTOS) {
+                return `You can only upload up to ${MAX_PHOTOS} photos`;
+              }
+
+              return true;
+            },
           }}
           render={({ field: { onChange } }) => (
             <Box>
@@ -276,6 +288,7 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
                 component="label"
                 fullWidth
                 startIcon={<AddPhotoAlternateIcon />}
+                disabled={photoPreviews.length >= MAX_PHOTOS}
                 sx={style.addPhotosButton}
               >
                 Add Photos
@@ -284,7 +297,9 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
                   hidden
                   accept="image/*"
                   multiple
-                  onChange={e => handlePhotoUpload(e, onChange)}
+                  onChange={e =>
+                    handlePhotoUpload(e, onChange, setPhotoLimitWarning)
+                  }
                 />
               </Button>
               {errors.photos && (
@@ -294,6 +309,11 @@ const UpsertPostModal: React.FC<UpsertPostModalProps> = ({
                   sx={style.errorText}
                 >
                   {errors.photos.message}
+                </Typography>
+              )}
+              {photoLimitWarning && (
+                <Typography sx={style.photoLimitWarning}>
+                  {photoLimitWarning}
                 </Typography>
               )}
 

@@ -33,6 +33,13 @@ const styles = {
     gap: 1,
     flexWrap: 'wrap',
   },
+
+  photoLimitWarning: {
+    color: '#ed6c02',
+    fontSize: '0.75rem',
+    mt: 0.5,
+    fontWeight: 500,
+  },
 };
 
 export default styles;
